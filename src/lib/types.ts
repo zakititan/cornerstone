@@ -124,15 +124,43 @@ export interface CustomerJourneyStepResult {
   id: string;
   label: string;
   status: JourneyStepStatus;
-  note?: string;
+  note?: string | undefined;
 }
 
 export interface CustomerJourneyTest {
   journeyType: CustomerJourneyType;
-  customJourneyLabel?: string;
+  customJourneyLabel?: string | undefined;
   steps: CustomerJourneyStepResult[];
   lastUpdatedAt: string;
-  completedAt?: string | null;
+  completedAt?: string | null | undefined;
+}
+
+export type DomainShortlistStatus =
+  "considering" | "preferred" | "backup" | "rejected" | "purchased";
+
+export interface SavedDomainIdea {
+  id: string;
+  domain: string;
+  status: DomainShortlistStatus;
+  note?: string | undefined;
+  score?:
+    | {
+        clarity: number;
+        memorability: number;
+        spellingEase: number;
+        localRelevance: number;
+        brandFlexibility: number;
+      }
+    | undefined;
+  availability?:
+    | {
+        status: "available" | "registered" | "unknown";
+        checkedAt: string;
+        message?: string | undefined;
+      }
+    | undefined;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface AppState {
@@ -146,5 +174,6 @@ export interface AppState {
   dnsRecords: DomainRecordEntry[];
   completedArticles: string[];
   account: { signedIn: boolean; fullName: string; email: string };
-  customerJourneyTest?: CustomerJourneyTest;
+  customerJourneyTest?: CustomerJourneyTest | undefined;
+  savedDomainIdeas: SavedDomainIdea[];
 }

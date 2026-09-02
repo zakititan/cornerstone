@@ -543,6 +543,7 @@ export function demoState(): AppState {
     completedArticles: [],
     account: { signedIn: false, fullName: "", email: "" },
     customerJourneyTest: undefined,
+    savedDomainIdeas: [],
   };
 }
 
@@ -570,6 +571,7 @@ export function emptyState(): AppState {
     completedArticles: [],
     account: { signedIn: false, fullName: "", email: "" },
     customerJourneyTest: undefined,
+    savedDomainIdeas: [],
   };
 }
 

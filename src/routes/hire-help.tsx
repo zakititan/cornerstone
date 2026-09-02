@@ -20,20 +20,58 @@ export const Route = createFileRoute("/hire-help")({
           "Typical price ranges, questions to ask, red flags to avoid, and how to keep ownership of your domain and accounts.",
       },
       { property: "og:title", content: "Hiring help safely" },
-      { property: "og:description", content: "Know what to ask, what it costs, and how to stay in control." },
+      {
+        property: "og:description",
+        content: "Know what to ask, what it costs, and how to stay in control.",
+      },
     ],
   }),
   component: HireHelpPage,
 });
 
 const TASKS = [
-  { task: "Register a domain and set it up", diy: "20 minutes", cost: "£10–£30 per year", worth: "Do it yourself — it must be in your name." },
-  { task: "Connect a domain to a website (DNS)", diy: "1–2 hours", cost: "£50–£150 one-off", worth: "Worth paying if the records confuse you." },
-  { task: "Build a simple 5-page website", diy: "1–2 weekends", cost: "£500–£3,000", worth: "DIY on a builder is realistic for most." },
-  { task: "Set up business email", diy: "1 hour", cost: "£50–£120 one-off", worth: "Usually straightforward to do yourself." },
-  { task: "Logo and brand basics", diy: "A few hours", cost: "£150–£800", worth: "Paying often pays off visually." },
-  { task: "Local search setup", diy: "1–2 hours", cost: "£100–£400", worth: "DIY first; the listings are free." },
-  { task: "Ongoing maintenance", diy: "1 hour a month", cost: "£25–£150 a month", worth: "Consider it once you rely on the site." },
+  {
+    task: "Register a domain and set it up",
+    diy: "20 minutes",
+    cost: "£10–£30 per year",
+    worth: "Do it yourself — it must be in your name.",
+  },
+  {
+    task: "Connect a domain to a website (DNS)",
+    diy: "1–2 hours",
+    cost: "£50–£150 one-off",
+    worth: "Worth paying if the records confuse you.",
+  },
+  {
+    task: "Build a simple 5-page website",
+    diy: "1–2 weekends",
+    cost: "£500–£3,000",
+    worth: "DIY on a builder is realistic for most.",
+  },
+  {
+    task: "Set up business email",
+    diy: "1 hour",
+    cost: "£50–£120 one-off",
+    worth: "Usually straightforward to do yourself.",
+  },
+  {
+    task: "Logo and brand basics",
+    diy: "A few hours",
+    cost: "£150–£800",
+    worth: "Paying often pays off visually.",
+  },
+  {
+    task: "Local search setup",
+    diy: "1–2 hours",
+    cost: "£100–£400",
+    worth: "DIY first; the listings are free.",
+  },
+  {
+    task: "Ongoing maintenance",
+    diy: "1 hour a month",
+    cost: "£25–£150 a month",
+    worth: "Consider it once you rely on the site.",
+  },
 ];
 
 function HireHelpPage() {
@@ -44,8 +82,9 @@ function HireHelpPage() {
       description="There is no shame in paying someone. There is real risk in paying the wrong someone — here is how to tell the difference."
     >
       <SafetyWarningBanner title="Keep ownership in your name">
-        Whoever helps you, the domain, hosting, email and analytics accounts must be registered to your business, with
-        your email as the recovery address. Give collaborator or admin access instead of handing over your login.
+        Whoever helps you, the domain, hosting, email and analytics accounts must be registered to
+        your business, with your email as the recovery address. Give collaborator or admin access
+        instead of handing over your login.
       </SafetyWarningBanner>
 
       <ContentSection title="What things typically cost">
@@ -101,9 +140,10 @@ function HireHelpPage() {
 
       <ContentSection title="Where to find people">
         <p>
-          Ask other local business owners, your accountant, or a nearby business support organisation. Freelance
-          marketplaces and platform partner directories are options too — check reviews and ask for two recent
-          examples you can visit yourself. We do not run a directory and we are not paid to recommend anyone.
+          Ask other local business owners, your accountant, or a nearby business support
+          organisation. Freelance marketplaces and platform partner directories are options too —
+          check reviews and ask for two recent examples you can visit yourself. We do not run a
+          directory and we are not paid to recommend anyone.
         </p>
         <div className="flex flex-wrap gap-2 pt-1">
           <Button asChild variant="outline">

@@ -11,6 +11,7 @@ import {
   FileText,
   Rocket,
   BookOpen,
+  ClipboardCheck,
 } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { ProgressRing } from "@/components/ProgressRing";
@@ -51,6 +52,7 @@ const QUICK_TOOLS = [
   { to: "/connect-domain", label: "Connect domain", icon: Network },
   { to: "/content", label: "Content builder", icon: FileText },
   { to: "/checklist", label: "Launch checklist", icon: ListChecks },
+  { to: "/customer-journey", label: "Journey tester", icon: ClipboardCheck },
 ];
 
 function Dashboard() {
@@ -61,11 +63,12 @@ function Dashboard() {
   const percent = progressPercent(tasks);
   const stage = currentStage(tasks);
   const readiness = useMemo(
-    () => getReadiness(tasks, state.business, state.ownership),
-    [tasks, state.business, state.ownership],
+    () => getReadiness(tasks, state.business, state.ownership, state.customerJourneyTest),
+    [tasks, state.business, state.ownership, state.customerJourneyTest],
   );
   const nextTask = useMemo(
-    () => tasks.find((t) => t.status === "in_progress") ?? tasks.find((t) => t.status !== "complete"),
+    () =>
+      tasks.find((t) => t.status === "in_progress") ?? tasks.find((t) => t.status !== "complete"),
     [tasks],
   );
   const recent = useMemo(
@@ -91,7 +94,10 @@ function Dashboard() {
 
   if (!hasPlan) {
     return (
-      <AppShell title="Your dashboard" description="Build a plan to unlock your personalized roadmap.">
+      <AppShell
+        title="Your dashboard"
+        description="Build a plan to unlock your personalized roadmap."
+      >
         <EmptyState
           icon={Rocket}
           title="No launch plan yet"
@@ -141,7 +147,9 @@ function Dashboard() {
             <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
               Your next step
             </p>
-            <p className="mt-2 font-display text-lg font-semibold">{nextTask?.title ?? "You're all caught up"}</p>
+            <p className="mt-2 font-display text-lg font-semibold">
+              {nextTask?.title ?? "You're all caught up"}
+            </p>
             <p className="mt-1 text-sm text-muted-foreground">
               {nextTask?.description ?? "Review your maintenance calendar to keep things healthy."}
             </p>
@@ -153,7 +161,9 @@ function Dashboard() {
           </div>
 
           <div className="surface-panel p-5">
-            <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Current stage</p>
+            <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+              Current stage
+            </p>
             <p className="mt-2 font-display text-lg font-semibold">{stageLabel}</p>
             <div className="mt-3 flex flex-wrap gap-1.5">
               {PHASES.map((p) => (
@@ -175,8 +185,12 @@ function Dashboard() {
           </div>
 
           <div className="surface-panel p-5">
-            <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Target timeline</p>
-            <p className="mt-2 font-display text-lg font-semibold">{state.business.timeline || "flexible"}</p>
+            <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+              Target timeline
+            </p>
+            <p className="mt-2 font-display text-lg font-semibold">
+              {state.business.timeline || "flexible"}
+            </p>
             <p className="mt-1 text-sm text-muted-foreground">
               {readiness.completedRequiredTasks} of {readiness.totalRequiredTasks} required done
             </p>
@@ -184,6 +198,24 @@ function Dashboard() {
         </div>
 
         <LaunchReadinessCard readiness={readiness} />
+
+        <div className="surface-panel flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="font-display text-sm font-semibold flex items-center gap-2">
+              <ClipboardCheck className="size-4 text-primary" aria-hidden="true" /> Test your main
+              customer action
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Walk through your primary journey on a real phone — phone, WhatsApp, form, booking,
+              purchase, visit or newsletter — and record what happens.
+            </p>
+          </div>
+          <Button asChild size="sm" className="shrink-0">
+            <Link to="/customer-journey">
+              Open journey tester <ArrowRight className="size-4" aria-hidden="true" />
+            </Link>
+          </Button>
+        </div>
 
         {/* Next step detail */}
         {nextTask ? (
@@ -244,12 +276,16 @@ function Dashboard() {
                       </div>
                       <p className="mt-1 text-sm text-muted-foreground">{phase.why}</p>
                       <p className="mt-2 text-xs text-muted-foreground">
-                        {done}/{phaseTasks.length} tasks · about {Math.round(minutes / 60) || 1} hour
+                        {done}/{phaseTasks.length} tasks · about {Math.round(minutes / 60) || 1}{" "}
+                        hour
                         {Math.round(minutes / 60) === 1 ? "" : "s"}
                       </p>
                     </div>
                     <ChevronDown
-                      className={cn("mt-1 size-5 shrink-0 transition-transform", open && "rotate-180")}
+                      className={cn(
+                        "mt-1 size-5 shrink-0 transition-transform",
+                        open && "rotate-180",
+                      )}
                       aria-hidden="true"
                     />
                   </button>
@@ -292,7 +328,10 @@ function Dashboard() {
                 ["Website needs", state.business.needs.join(", ")],
                 ["Comfort with technology", state.business.techComfort],
               ].map(([k, v]) => (
-                <div key={k} className="flex flex-wrap justify-between gap-2 border-b border-border pb-2">
+                <div
+                  key={k}
+                  className="flex flex-wrap justify-between gap-2 border-b border-border pb-2"
+                >
                   <dt className="text-muted-foreground">{k}</dt>
                   <dd className="max-w-[60%] text-right font-medium">{v || "—"}</dd>
                 </div>
@@ -363,7 +402,9 @@ function Dashboard() {
                     <BookOpen className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
                     <span>
                       <span className="font-medium">{a.title}</span>
-                      <span className="block text-xs text-muted-foreground">{a.minutes} min read</span>
+                      <span className="block text-xs text-muted-foreground">
+                        {a.minutes} min read
+                      </span>
                     </span>
                   </Link>
                 </li>

@@ -1,6 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Copy, Globe, Search, ShieldCheck, Download, Building2, Server, Route as RouteIcon, Lock } from "lucide-react";
+import {
+  Copy,
+  Globe,
+  Search,
+  ShieldCheck,
+  Download,
+  Building2,
+  Server,
+  Route as RouteIcon,
+  Lock,
+} from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { Callout } from "@/components/Callouts";
@@ -39,7 +49,8 @@ export const Route = createFileRoute("/domains")({
       { property: "og:title", content: "Find a web address your customers can remember" },
       {
         property: "og:description",
-        content: "Domain name ideas, a plain-English scoring card, and a safety checklist so the address stays yours.",
+        content:
+          "Domain name ideas, a plain-English scoring card, and a safety checklist so the address stays yours.",
       },
     ],
   }),
@@ -124,18 +135,45 @@ function scoreDomain(domain: string, city: string) {
   const hasHyphenOrNumber = /[-0-9]/.test(name);
   const loc = slug(city.split(",")[0] ?? "");
   const clarity = Math.max(2, Math.min(10, 12 - Math.floor(len / 3)));
-  const memorability = Math.max(2, Math.min(10, 11 - Math.floor(len / 3) - (hasHyphenOrNumber ? 3 : 0)));
+  const memorability = Math.max(
+    2,
+    Math.min(10, 11 - Math.floor(len / 3) - (hasHyphenOrNumber ? 3 : 0)),
+  );
   const spelling = hasHyphenOrNumber ? 4 : /(ph|kn|qu|xx|zz)/.test(name) ? 6 : 9;
   const local = loc && name.includes(loc) ? 9 : 5;
   const flexibility = /shop|store|cakes|plumb/.test(name) ? 5 : 8;
   const confusion = hasHyphenOrNumber ? 4 : len > 20 ? 5 : 9;
   return [
-    { label: "Clarity", value: clarity, hint: "Can someone guess what your business does or is called?" },
-    { label: "Memorability", value: memorability, hint: "Will a customer still remember it tomorrow?" },
-    { label: "Ease of spelling", value: spelling, hint: "Can you say it once on the phone and be typed correctly?" },
-    { label: "Local relevance", value: local, hint: "Does it signal the area you serve, when that helps?" },
-    { label: "Brand flexibility", value: flexibility, hint: "Will it still fit if you add services later?" },
-    { label: "Low confusion risk", value: confusion, hint: "Is it easy to mix up with another business or spelling?" },
+    {
+      label: "Clarity",
+      value: clarity,
+      hint: "Can someone guess what your business does or is called?",
+    },
+    {
+      label: "Memorability",
+      value: memorability,
+      hint: "Will a customer still remember it tomorrow?",
+    },
+    {
+      label: "Ease of spelling",
+      value: spelling,
+      hint: "Can you say it once on the phone and be typed correctly?",
+    },
+    {
+      label: "Local relevance",
+      value: local,
+      hint: "Does it signal the area you serve, when that helps?",
+    },
+    {
+      label: "Brand flexibility",
+      value: flexibility,
+      hint: "Will it still fit if you add services later?",
+    },
+    {
+      label: "Low confusion risk",
+      value: confusion,
+      hint: "Is it easy to mix up with another business or spelling?",
+    },
   ];
 }
 
@@ -143,8 +181,16 @@ const BASICS = [
   { icon: Globe, term: "Domain", text: "Your web address, like yourbusiness.com." },
   { icon: Building2, term: "Website", text: "The pages visitors actually see and read." },
   { icon: Server, term: "Hosting", text: "The service that stores your site and delivers it." },
-  { icon: RouteIcon, term: "DNS", text: "The settings that direct your address to the right services." },
-  { icon: ShieldCheck, term: "Registrar", text: "The company where you register and renew your address." },
+  {
+    icon: RouteIcon,
+    term: "DNS",
+    text: "The settings that direct your address to the right services.",
+  },
+  {
+    icon: ShieldCheck,
+    term: "Registrar",
+    text: "The company where you register and renew your address.",
+  },
   { icon: Lock, term: "HTTPS", text: "The padlock that protects the connection to your site." },
 ];
 
@@ -240,14 +286,14 @@ function DomainsPage() {
               </Button>
             </div>
             <p className="mt-2 text-sm text-muted-foreground">
-              We check the registry's public RDAP service for each suggestion. A registrar confirms the final
-              price and completes registration.
+              We check the registry's public RDAP service for each suggestion. A registrar confirms
+              the final price and completes registration.
             </p>
           </section>
 
           <Callout tone="warning" title="Check you are entitled to the name">
-            Before registering, make sure using this name does not conflict with another business or trademark
-            in your country. We cannot check that for you.
+            Before registering, make sure using this name does not conflict with another business or
+            trademark in your country. We cannot check that for you.
           </Callout>
 
           <section aria-labelledby="ideas">
@@ -311,7 +357,11 @@ function DomainsPage() {
                             <Copy className="size-4" aria-hidden="true" />
                             <span className="sr-only sm:not-sr-only">Copy</span>
                           </Button>
-                          <Button size="sm" variant="outline" onClick={() => setScoreInput(s.domain)}>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setScoreInput(s.domain)}
+                          >
                             Score it
                           </Button>
                           <Button
@@ -374,7 +424,11 @@ function DomainsPage() {
                       </Tooltip>
                       <span className="font-semibold">{s.value}/10</span>
                     </div>
-                    <Progress value={s.value * 10} className="mt-1.5" aria-label={`${s.label} ${s.value} out of 10`} />
+                    <Progress
+                      value={s.value * 10}
+                      className="mt-1.5"
+                      aria-label={`${s.label} ${s.value} out of 10`}
+                    />
                   </li>
                 ))}
               </ul>
@@ -397,8 +451,8 @@ function DomainsPage() {
               ))}
             </div>
             <Callout tone="info" title="A simple way to picture it" className="mt-4">
-              Your domain is your street address. Hosting is the building. DNS is the directory that tells
-              visitors where to go.
+              Your domain is your street address. Hosting is the building. DNS is the directory that
+              tells visitors where to go.
             </Callout>
           </section>
 
@@ -413,7 +467,9 @@ function DomainsPage() {
                     id={`safety-${item}`}
                     checked={checked.includes(item)}
                     onCheckedChange={() =>
-                      setChecked((c) => (c.includes(item) ? c.filter((x) => x !== item) : [...c, item]))
+                      setChecked((c) =>
+                        c.includes(item) ? c.filter((x) => x !== item) : [...c, item],
+                      )
                     }
                     className="mt-0.5"
                   />
@@ -424,8 +480,8 @@ function DomainsPage() {
               ))}
             </ul>
             <p className="mt-4 text-sm text-muted-foreground">
-              {checked.length} of {SAFETY.length} complete. Keep this account in your control — it is part of
-              your business infrastructure.
+              {checked.length} of {SAFETY.length} complete. Keep this account in your control — it
+              is part of your business infrastructure.
             </p>
           </section>
 
@@ -434,8 +490,8 @@ function DomainsPage() {
 
         <TabsContent value="own" className="space-y-6">
           <Callout tone="info" title="Good news — the hardest purchase decision is behind you">
-            The focus now is confirming you control the account, protecting it, and pointing it at your new
-            website without breaking email.
+            The focus now is confirming you control the account, protecting it, and pointing it at
+            your new website without breaking email.
           </Callout>
           <section className="surface-panel space-y-5 p-5 sm:p-6">
             <div className="space-y-2">

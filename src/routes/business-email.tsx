@@ -3,7 +3,12 @@ import { AppShell } from "@/components/AppShell";
 import { Callout } from "@/components/Callouts";
 import { GlossaryTooltip } from "@/components/GlossaryTooltip";
 import { Badge } from "@/components/ui/badge";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/business-email")({
@@ -18,7 +23,8 @@ export const Route = createFileRoute("/business-email")({
       { property: "og:title", content: "Set up business email" },
       {
         property: "og:description",
-        content: "Plain-English guidance on professional email addresses, naming, and mail deliverability.",
+        content:
+          "Plain-English guidance on professional email addresses, naming, and mail deliverability.",
       },
     ],
   }),
@@ -115,9 +121,9 @@ function BusinessEmail() {
         </section>
 
         <Callout tone="warning" title="Email records deserve care">
-          Your <GlossaryTooltip term="MX record" /> tells the internet where to deliver your mail. Removing or
-          mistyping it stops email arriving immediately, and senders may not be told it failed. Screenshot your
-          settings before changing anything.
+          Your <GlossaryTooltip term="MX record" /> tells the internet where to deliver your mail.
+          Removing or mistyping it stops email arriving immediately, and senders may not be told it
+          failed. Screenshot your settings before changing anything.
         </Callout>
 
         <section className="surface-panel p-5 sm:p-6">
@@ -153,12 +159,15 @@ function BusinessEmail() {
         </section>
 
         <section className="surface-panel p-5 sm:p-6">
-          <h2 className="font-display text-xl font-bold">Reaching the inbox, not the spam folder</h2>
+          <h2 className="font-display text-xl font-bold">
+            Reaching the inbox, not the spam folder
+          </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Three settings decide whether your mail is trusted: <GlossaryTooltip term="SPF" /> lists who may
-            send on your behalf, <GlossaryTooltip term="DKIM" /> signs your messages so they can be verified,
-            and <GlossaryTooltip term="DMARC" /> tells other mail systems what to do when a check fails. Your
-            email provider publishes the exact values — copy them without editing.
+            Three settings decide whether your mail is trusted: <GlossaryTooltip term="SPF" /> lists
+            who may send on your behalf, <GlossaryTooltip term="DKIM" /> signs your messages so they
+            can be verified, and <GlossaryTooltip term="DMARC" /> tells other mail systems what to
+            do when a check fails. Your email provider publishes the exact values — copy them
+            without editing.
           </p>
         </section>
 
@@ -167,7 +176,9 @@ function BusinessEmail() {
           <Accordion type="single" collapsible className="surface-panel mt-4 px-5">
             {FAQ.map((f) => (
               <AccordionItem key={f.q} value={f.q}>
-                <AccordionTrigger className="text-left font-display font-semibold">{f.q}</AccordionTrigger>
+                <AccordionTrigger className="text-left font-display font-semibold">
+                  {f.q}
+                </AccordionTrigger>
                 <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
                   {f.a}
                 </AccordionContent>

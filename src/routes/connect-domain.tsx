@@ -10,8 +10,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { useStore } from "@/lib/store";
 
@@ -27,7 +39,8 @@ export const Route = createFileRoute("/connect-domain")({
       { property: "og:title", content: "Connect your domain to your website" },
       {
         property: "og:description",
-        content: "Guided DNS records, safeguards before you change anything, and troubleshooting in plain English.",
+        content:
+          "Guided DNS records, safeguards before you change anything, and troubleshooting in plain English.",
       },
     ],
   }),
@@ -147,9 +160,9 @@ function ConnectDomain() {
     >
       <div className="space-y-8">
         <Callout tone="warning" title="Read this before you change anything">
-          Changes to these settings can affect your website <em>and</em> your business email. If your domain
-          already receives email, do not remove mail records unless your email provider specifically tells you
-          to.
+          Changes to these settings can affect your website <em>and</em> your business email. If
+          your domain already receives email, do not remove mail records unless your email provider
+          specifically tells you to.
         </Callout>
 
         <section className="surface-panel space-y-6 p-5 sm:p-6">
@@ -180,7 +193,11 @@ function ConnectDomain() {
             <legend className="text-base font-medium">
               Do you use business email on this address today?
             </legend>
-            <RadioGroup value={usesEmail} onValueChange={setUsesEmail} className="mt-3 gap-2 sm:grid-cols-3">
+            <RadioGroup
+              value={usesEmail}
+              onValueChange={setUsesEmail}
+              className="mt-3 gap-2 sm:grid-cols-3"
+            >
               {[
                 { v: "yes", l: "Yes" },
                 { v: "no", l: "No" },
@@ -191,7 +208,9 @@ function ConnectDomain() {
                   htmlFor={`email-${o.v}`}
                   className={cn(
                     "flex cursor-pointer items-center gap-3 rounded-lg border p-3 text-sm font-medium",
-                    usesEmail === o.v ? "border-primary bg-primary-soft" : "border-border hover:bg-muted",
+                    usesEmail === o.v
+                      ? "border-primary bg-primary-soft"
+                      : "border-border hover:bg-muted",
                   )}
                 >
                   <RadioGroupItem id={`email-${o.v}`} value={o.v} />
@@ -202,8 +221,14 @@ function ConnectDomain() {
           </fieldset>
 
           <fieldset>
-            <legend className="text-base font-medium">Are you moving an existing website or starting fresh?</legend>
-            <RadioGroup value={migrating} onValueChange={setMigrating} className="mt-3 gap-2 sm:grid-cols-2">
+            <legend className="text-base font-medium">
+              Are you moving an existing website or starting fresh?
+            </legend>
+            <RadioGroup
+              value={migrating}
+              onValueChange={setMigrating}
+              className="mt-3 gap-2 sm:grid-cols-2"
+            >
               {[
                 { v: "fresh", l: "Starting fresh" },
                 { v: "moving", l: "Moving an existing website" },
@@ -213,7 +238,9 @@ function ConnectDomain() {
                   htmlFor={`mig-${o.v}`}
                   className={cn(
                     "flex cursor-pointer items-center gap-3 rounded-lg border p-3 text-sm font-medium",
-                    migrating === o.v ? "border-primary bg-primary-soft" : "border-border hover:bg-muted",
+                    migrating === o.v
+                      ? "border-primary bg-primary-soft"
+                      : "border-border hover:bg-muted",
                   )}
                 >
                   <RadioGroupItem id={`mig-${o.v}`} value={o.v} />
@@ -226,14 +253,16 @@ function ConnectDomain() {
 
         {usesEmail === "yes" ? (
           <Callout tone="warning" title="Protect your email">
-            Website settings and email settings live in the same place but are not interchangeable. Keep your
-            mail-related records unless you are intentionally changing email providers. This page only shows
-            website records; it will never ask you to add or replace MX, SPF, DKIM or DMARC records.
+            Website settings and email settings live in the same place but are not interchangeable.
+            Keep your mail-related records unless you are intentionally changing email providers.
+            This page only shows website records; it will never ask you to add or replace MX, SPF,
+            DKIM or DMARC records.
           </Callout>
         ) : usesEmail === "unsure" ? (
           <Callout tone="danger" title="Let's check your email first">
-            We need to know whether you currently use email on this domain before showing instructions. Send a
-            test message to an address on your domain, or ask whoever set it up.
+            We need to know whether you currently use email on this domain before showing
+            instructions. Send a test message to an address on your domain, or ask whoever set it
+            up.
           </Callout>
         ) : null}
 
@@ -266,8 +295,9 @@ function ConnectDomain() {
             Your settings for {domain}
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            These are generic examples. Always use the exact values your website provider gives you. Learn what{" "}
-            <GlossaryTooltip term="A record" /> and <GlossaryTooltip term="CNAME" /> mean.
+            These are generic examples. Always use the exact values your website provider gives you.
+            Learn what <GlossaryTooltip term="A record" /> and <GlossaryTooltip term="CNAME" />{" "}
+            mean.
           </p>
 
           {canShowRecords ? (
@@ -285,10 +315,15 @@ function ConnectDomain() {
                 </TableHeader>
                 <TableBody>
                   {records.map((r) => (
-                    <TableRow key={r.id} className={cn(added.includes(r.id) && "bg-success-soft/50")}>
+                    <TableRow
+                      key={r.id}
+                      className={cn(added.includes(r.id) && "bg-success-soft/50")}
+                    >
                       <TableCell className="font-medium">{r.type}</TableCell>
                       <TableCell className="font-mono text-sm">{r.host}</TableCell>
-                      <TableCell className="max-w-xs font-mono text-sm break-words">{r.value}</TableCell>
+                      <TableCell className="max-w-xs font-mono text-sm break-words">
+                        {r.value}
+                      </TableCell>
                       <TableCell className="hidden max-w-xs text-sm text-muted-foreground lg:table-cell">
                         {r.purpose}
                       </TableCell>
@@ -296,7 +331,9 @@ function ConnectDomain() {
                         <Checkbox
                           checked={added.includes(r.id)}
                           onCheckedChange={() =>
-                            setAdded((a) => (a.includes(r.id) ? a.filter((x) => x !== r.id) : [...a, r.id]))
+                            setAdded((a) =>
+                              a.includes(r.id) ? a.filter((x) => x !== r.id) : [...a, r.id],
+                            )
                           }
                           aria-label={`I added the ${r.type} record`}
                         />
@@ -325,17 +362,19 @@ function ConnectDomain() {
               </AccordionTrigger>
               <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
                 Sign in to the company where your web address is registered
-                {registrar ? ` (${registrar})` : ""}. Look for “DNS”, “Domain settings”, “Manage DNS” or “Advanced
-                settings”. You will see a list of existing entries and a button to add a new one. Add each row
-                above exactly as written, then save.
+                {registrar ? ` (${registrar})` : ""}. Look for “DNS”, “Domain settings”, “Manage
+                DNS” or “Advanced settings”. You will see a list of existing entries and a button to
+                add a new one. Add each row above exactly as written, then save.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="wrong">
-              <AccordionTrigger className="font-display font-semibold">What could go wrong?</AccordionTrigger>
+              <AccordionTrigger className="font-display font-semibold">
+                What could go wrong?
+              </AccordionTrigger>
               <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
-                The most common problems are typing the value with a trailing space, entering the host as your
-                full domain when the provider only wants “@”, and deleting an existing mail record. Your
-                screenshot lets you undo any of these in a minute.
+                The most common problems are typing the value with a trailing space, entering the
+                host as your full domain when the provider only wants “@”, and deleting an existing
+                mail record. Your screenshot lets you undo any of these in a minute.
               </AccordionContent>
             </AccordionItem>
           </Accordion>
@@ -348,7 +387,9 @@ function ConnectDomain() {
           <Accordion type="single" collapsible className="surface-panel mt-4 px-5">
             {TROUBLESHOOTING.map((t) => (
               <AccordionItem key={t.q} value={t.q}>
-                <AccordionTrigger className="text-left font-display font-semibold">{t.q}</AccordionTrigger>
+                <AccordionTrigger className="text-left font-display font-semibold">
+                  {t.q}
+                </AccordionTrigger>
                 <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
                   {t.a}
                 </AccordionContent>

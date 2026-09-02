@@ -37,8 +37,10 @@ export const ARTICLES: Article[] = [
     meaning:
       "You usually pay for these separately, and they can come from different companies. Owning one does not mean you own the other.",
     whenToCare: "Before you buy anything, and any time a provider offers you a bundle.",
-    mistake: "Assuming that buying a domain means your website is live. It is not — nothing is connected yet.",
-    nextAction: "Write down which company holds your web address and which one will hold your website.",
+    mistake:
+      "Assuming that buying a domain means your website is live. It is not — nothing is connected yet.",
+    nextAction:
+      "Write down which company holds your web address and which one will hold your website.",
     terms: ["Domain", "Hosting", "Registrar"],
     minutes: 4,
   },
@@ -49,7 +51,8 @@ export const ARTICLES: Article[] = [
     summary: "Short, easy to say out loud, easy to spell, and clearly yours.",
     meaning:
       "Customers often hear your web address before they see it. If you have to spell it twice on the phone, pick another.",
-    whenToCare: "Before you register anything — changing later means losing links and printed materials.",
+    whenToCare:
+      "Before you register anything — changing later means losing links and printed materials.",
     mistake: "Adding hyphens or numbers to force an unavailable name to work.",
     nextAction: "Run three candidate names through the Domain Name Score in the Domain Finder.",
     terms: ["Domain", "Registrar"],
@@ -148,7 +151,8 @@ export const ARTICLES: Article[] = [
     title: "What HTTPS means for your customers",
     category: "Security",
     summary: "The padlock shows the connection to your site is encrypted.",
-    meaning: "Without it, browsers warn visitors that your site is 'not secure', which loses trust instantly.",
+    meaning:
+      "Without it, browsers warn visitors that your site is 'not secure', which loses trust instantly.",
     whenToCare: "Immediately after connecting your web address.",
     mistake: "Ignoring a mixed-content warning after switching on HTTPS.",
     nextAction: "Load your site and confirm the padlock appears with no warning.",
@@ -160,7 +164,8 @@ export const ARTICLES: Article[] = [
     title: "How to test your contact form",
     category: "Website basics",
     summary: "Submit it yourself and confirm the message truly lands in a monitored inbox.",
-    meaning: "Silent form failures are one of the most common and costly small business website problems.",
+    meaning:
+      "Silent form failures are one of the most common and costly small business website problems.",
     whenToCare: "Before launch and once a month after.",
     mistake: "Assuming 'thanks for your message' means the email was delivered.",
     nextAction: "Send a test now and check your spam folder too.",
@@ -218,7 +223,8 @@ export const ARTICLES: Article[] = [
 ];
 
 export const GLOSSARY: Record<string, string> = {
-  Domain: "Your web address, like yourbusiness.com. You rent it yearly rather than buying it forever.",
+  Domain:
+    "Your web address, like yourbusiness.com. You rent it yearly rather than buying it forever.",
   Registrar: "The company where you register and renew your web address.",
   Hosting: "The service that stores your website's pages and shows them to visitors.",
   DNS: "The settings that tell the internet where your website and email live.",

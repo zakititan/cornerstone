@@ -109,7 +109,8 @@ export const WEBSITE_NEEDS = [
 ];
 
 let seq = 0;
-const nextId = (prefix: string) => `${prefix}-${(seq += 1)}-${Math.random().toString(36).slice(2, 7)}`;
+const nextId = (prefix: string) =>
+  `${prefix}-${(seq += 1)}-${Math.random().toString(36).slice(2, 7)}`;
 
 interface Seed {
   phase: PhaseKey;
@@ -150,7 +151,8 @@ function baseSeeds(b: BusinessProfile): Seed[] {
       phase: "plan",
       category: "Website essentials",
       title: "Collect your business details in one place",
-      description: "Business name, phone, address or service area, hours, and any existing photos or logo.",
+      description:
+        "Business name, phone, address or service area, hours, and any existing photos or logo.",
       importance: "recommended",
       minutes: 30,
     },
@@ -280,7 +282,8 @@ function baseSeeds(b: BusinessProfile): Seed[] {
       phase: "connect",
       category: "Domain, DNS and security",
       title: "Take a screenshot of your current domain settings",
-      description: "Before changing anything, save a copy of what is already there so you can undo mistakes.",
+      description:
+        "Before changing anything, save a copy of what is already there so you can undo mistakes.",
       importance: "required",
       minutes: 10,
     },
@@ -297,7 +300,8 @@ function baseSeeds(b: BusinessProfile): Seed[] {
       phase: "connect",
       category: "Domain, DNS and security",
       title: "Turn on HTTPS and check for browser warnings",
-      description: "HTTPS is the padlock in the address bar. Most modern platforms enable it for you.",
+      description:
+        "HTTPS is the padlock in the address bar. Most modern platforms enable it for you.",
       importance: "required",
       minutes: 15,
     },
@@ -318,7 +322,8 @@ function baseSeeds(b: BusinessProfile): Seed[] {
         phase: "connect",
         category: "Business email",
         title: "Send and receive a test email",
-        description: "Send from your new address to a personal address and reply back to confirm both directions.",
+        description:
+          "Send from your new address to a personal address and reply back to confirm both directions.",
         importance: "required",
         minutes: 10,
       },
@@ -330,7 +335,8 @@ function baseSeeds(b: BusinessProfile): Seed[] {
       phase: "launch",
       category: "Website quality",
       title: "Check every page on a real phone",
-      description: "Most visitors to small business sites are on mobile. Look for cut-off text and tiny buttons.",
+      description:
+        "Most visitors to small business sites are on mobile. Look for cut-off text and tiny buttons.",
       importance: "required",
       minutes: 30,
     },
@@ -338,7 +344,8 @@ function baseSeeds(b: BusinessProfile): Seed[] {
       phase: "launch",
       category: "Website quality",
       title: "Test your contact form end to end",
-      description: "Submit it yourself and confirm the notification actually arrives in the right inbox.",
+      description:
+        "Submit it yourself and confirm the notification actually arrives in the right inbox.",
       importance: "required",
       minutes: 15,
     },
@@ -370,7 +377,8 @@ function baseSeeds(b: BusinessProfile): Seed[] {
       phase: "grow",
       category: "Measurement",
       title: "Set up website analytics and define one key action",
-      description: "Pick one thing that matters: a form submission, booking, call, purchase or signup.",
+      description:
+        "Pick one thing that matters: a form submission, booking, call, purchase or signup.",
       importance: "recommended",
       minutes: 30,
     },
@@ -534,6 +542,7 @@ export function demoState(): AppState {
     dnsRecords: [],
     completedArticles: [],
     account: { signedIn: false, fullName: "", email: "" },
+    customerJourneyTest: undefined,
   };
 }
 
@@ -560,6 +569,7 @@ export function emptyState(): AppState {
     dnsRecords: [],
     completedArticles: [],
     account: { signedIn: false, fullName: "", email: "" },
+    customerJourneyTest: undefined,
   };
 }
 

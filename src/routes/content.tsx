@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Copy, Sparkles } from "lucide-react";
+import { ClipboardCheck, Copy, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { Callout } from "@/components/Callouts";
@@ -24,7 +24,8 @@ export const Route = createFileRoute("/content")({
       { property: "og:title", content: "Write your website pages" },
       {
         property: "og:description",
-        content: "Prompts, examples and starter drafts for the five pages most small businesses need.",
+        content:
+          "Prompts, examples and starter drafts for the five pages most small businesses need.",
       },
     ],
   }),
@@ -56,20 +57,23 @@ const PAGES: Page[] = [
         id: "headline",
         label: "One sentence: what do you do and for whom?",
         help: "Plain language beats clever wording. A stranger should understand it in three seconds.",
-        example: "Small-batch sourdough and pastries, baked fresh every morning in Portland's Pearl District.",
+        example:
+          "Small-batch sourdough and pastries, baked fresh every morning in Portland's Pearl District.",
       },
       {
         id: "audience",
         label: "Who is this for?",
         help: "Naming your customer helps the right people feel recognised.",
-        example: "Neighbours, nearby offices ordering breakfast, and couples planning wedding cakes.",
+        example:
+          "Neighbours, nearby offices ordering breakfast, and couples planning wedding cakes.",
         rows: 3,
       },
       {
         id: "proof",
         label: "Why should someone trust you?",
         help: "Years in business, qualifications, reviews, or a simple promise you always keep.",
-        example: "Twelve years baking locally, 400+ five-star reviews, and everything sold on the day it is made.",
+        example:
+          "Twelve years baking locally, 400+ five-star reviews, and everything sold on the day it is made.",
         rows: 3,
       },
       {
@@ -89,14 +93,16 @@ const PAGES: Page[] = [
         id: "story",
         label: "How did the business start?",
         help: "Two or three honest sentences. No corporate language needed.",
-        example: "Maya started baking for the farmers market in 2013 and opened the Harbor & Hearth shop in 2016.",
+        example:
+          "Maya started baking for the farmers market in 2013 and opened the Harbor & Hearth shop in 2016.",
         rows: 4,
       },
       {
         id: "values",
         label: "What matters to you in how you work?",
         help: "Concrete beats abstract: name the actual practice, not the value word.",
-        example: "We mill our own flour weekly and donate unsold loaves to the community kitchen each evening.",
+        example:
+          "We mill our own flour weekly and donate unsold loaves to the community kitchen each evening.",
         rows: 3,
       },
       {
@@ -117,7 +123,8 @@ const PAGES: Page[] = [
         id: "list",
         label: "List what you offer, one per line",
         help: "Use the words customers use, not internal names.",
-        example: "Daily bread\nCelebration cakes\nWholesale to cafés\nMorning pastry boxes for offices",
+        example:
+          "Daily bread\nCelebration cakes\nWholesale to cafés\nMorning pastry boxes for offices",
         rows: 5,
       },
       {
@@ -186,7 +193,8 @@ const PAGES: Page[] = [
         id: "answers",
         label: "Your answers, in order",
         help: "Short, direct, and honest — including when the answer is no.",
-        example: "We bake gluten-free on Thursdays only.\nSame-day orders depend on what's left, so call first.\nWe deliver within three miles for £5.",
+        example:
+          "We bake gluten-free on Thursdays only.\nSame-day orders depend on what's left, so call first.\nWe deliver within three miles for £5.",
         rows: 5,
       },
     ],
@@ -234,8 +242,8 @@ function ContentBuilder() {
     >
       <div className="space-y-6">
         <Callout tone="info" title="Your words, in your voice">
-          Answer the prompts in ordinary language, as if a customer asked you in person. Everything saves to
-          this device automatically.
+          Answer the prompts in ordinary language, as if a customer asked you in person. Everything
+          saves to this device automatically.
         </Callout>
 
         <Tabs defaultValue="home">
@@ -256,7 +264,10 @@ function ContentBuilder() {
 
               {page.fields.map((f) => (
                 <div key={f.id} className="surface-panel space-y-2 p-5">
-                  <Label htmlFor={`${page.id}-${f.id}`} className="font-display text-base font-semibold">
+                  <Label
+                    htmlFor={`${page.id}-${f.id}`}
+                    className="font-display text-base font-semibold"
+                  >
                     {f.label}
                   </Label>
                   <p className="text-sm text-muted-foreground">{f.help}</p>
@@ -280,7 +291,9 @@ function ContentBuilder() {
                     <summary className="cursor-pointer text-sm font-medium">
                       Show an example for a bakery
                     </summary>
-                    <p className="mt-2 text-sm whitespace-pre-line text-muted-foreground">{f.example}</p>
+                    <p className="mt-2 text-sm whitespace-pre-line text-muted-foreground">
+                      {f.example}
+                    </p>
                   </details>
                 </div>
               ))}
@@ -315,6 +328,21 @@ function ContentBuilder() {
               <li key={c}>• {c}</li>
             ))}
           </ul>
+          <div className="mt-5 flex flex-col gap-3 rounded-xl border border-primary/20 bg-primary-soft/30 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="font-display text-sm font-semibold flex items-center gap-2">
+                <ClipboardCheck className="size-4 text-primary" aria-hidden="true" /> Next: test
+                with a real phone
+              </p>
+              <p className="text-sm text-muted-foreground">
+                After writing, try your main customer action end to end — form, booking, purchase or
+                call — as a stranger would.
+              </p>
+            </div>
+            <Button asChild size="sm" className="shrink-0">
+              <Link to="/customer-journey">Open journey tester →</Link>
+            </Button>
+          </div>
         </section>
       </div>
     </AppShell>

@@ -21,22 +21,61 @@ export const Route = createFileRoute("/ownership-record")({
           "Record which company holds your domain, DNS, website, email and analytics, and who can recover each account.",
       },
       { property: "og:title", content: "Your ownership record" },
-      { property: "og:description", content: "One page that proves your business controls its own online accounts." },
+      {
+        property: "og:description",
+        content: "One page that proves your business controls its own online accounts.",
+      },
     ],
   }),
   component: OwnershipRecordPage,
 });
 
 const FIELDS: { key: keyof OwnershipRecord; label: string; hint: string }[] = [
-  { key: "domainRegistrar", label: "Domain registrar", hint: "Where the web address is registered and renewed." },
-  { key: "renewalDate", label: "Domain renewal date", hint: "The date the domain must be renewed by." },
-  { key: "dnsProvider", label: "DNS provider", hint: "Where the records that point your domain are edited." },
-  { key: "websitePlatform", label: "Website platform or host", hint: "Where the site itself is built and published." },
-  { key: "emailProvider", label: "Business email provider", hint: "Who runs your @yourbusiness mailboxes." },
-  { key: "analyticsAccount", label: "Analytics account owner", hint: "Which account owns the visitor statistics." },
-  { key: "paymentProcessor", label: "Payment processor", hint: "Who processes card or online payments." },
-  { key: "socialOwners", label: "Social account owners", hint: "Who holds the login for each social profile." },
-  { key: "recoveryOwner", label: "Recovery contact", hint: "The email or phone used to recover these accounts." },
+  {
+    key: "domainRegistrar",
+    label: "Domain registrar",
+    hint: "Where the web address is registered and renewed.",
+  },
+  {
+    key: "renewalDate",
+    label: "Domain renewal date",
+    hint: "The date the domain must be renewed by.",
+  },
+  {
+    key: "dnsProvider",
+    label: "DNS provider",
+    hint: "Where the records that point your domain are edited.",
+  },
+  {
+    key: "websitePlatform",
+    label: "Website platform or host",
+    hint: "Where the site itself is built and published.",
+  },
+  {
+    key: "emailProvider",
+    label: "Business email provider",
+    hint: "Who runs your @yourbusiness mailboxes.",
+  },
+  {
+    key: "analyticsAccount",
+    label: "Analytics account owner",
+    hint: "Which account owns the visitor statistics.",
+  },
+  {
+    key: "paymentProcessor",
+    label: "Payment processor",
+    hint: "Who processes card or online payments.",
+  },
+  {
+    key: "socialOwners",
+    label: "Social account owners",
+    hint: "Who holds the login for each social profile.",
+  },
+  {
+    key: "recoveryOwner",
+    label: "Recovery contact",
+    hint: "The email or phone used to recover these accounts.",
+  },
 ];
 
 function OwnershipRecordPage() {
@@ -86,8 +125,9 @@ function OwnershipRecordPage() {
         <OwnershipWarningCard />
 
         <SafetyWarningBanner title="Never write passwords here">
-          This record names the companies and people involved — not credentials. Store passwords in a password
-          manager, and keep two-step verification switched on for the registrar and recovery email.
+          This record names the companies and people involved — not credentials. Store passwords in
+          a password manager, and keep two-step verification switched on for the registrar and
+          recovery email.
         </SafetyWarningBanner>
 
         <section className="surface-panel space-y-4 p-5 sm:p-6">
@@ -104,7 +144,9 @@ function OwnershipRecordPage() {
                 <Input
                   id={`own-${f.key}`}
                   value={(record[f.key] as string) ?? ""}
-                  onChange={(e) => setOwnership({ [f.key]: e.target.value } as Partial<OwnershipRecord>)}
+                  onChange={(e) =>
+                    setOwnership({ [f.key]: e.target.value } as Partial<OwnershipRecord>)
+                  }
                   aria-describedby={`own-${f.key}-hint`}
                 />
                 <p id={`own-${f.key}-hint`} className="text-xs text-muted-foreground">
@@ -129,7 +171,10 @@ function OwnershipRecordPage() {
         <section className="surface-panel space-y-3 p-5 sm:p-6">
           <h2 className="font-display text-lg font-bold">Why this matters</h2>
           <ul className="space-y-1.5 text-sm text-muted-foreground">
-            <li>• If a helper registers the domain in their own name, they control your address, not you.</li>
+            <li>
+              • If a helper registers the domain in their own name, they control your address, not
+              you.
+            </li>
             <li>• A lapsed renewal can take your website and email offline the same day.</li>
             <li>• A recovery email you no longer control makes every account harder to rescue.</li>
           </ul>

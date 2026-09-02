@@ -115,12 +115,19 @@ export function AppShell({
             <div className="flex items-center gap-3 px-4 py-4 sm:px-6">
               <Sheet open={open} onOpenChange={setOpen}>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Open navigation menu">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="lg:hidden"
+                    aria-label="Open navigation menu"
+                  >
                     <Menu className="size-5" aria-hidden="true" />
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="w-72 overflow-y-auto bg-sidebar p-4">
-                  <SheetTitle className="px-3 pb-4 font-display">Launch My Business Online</SheetTitle>
+                  <SheetTitle className="px-3 pb-4 font-display">
+                    Launch My Business Online
+                  </SheetTitle>
                   <NavLinks onNavigate={() => setOpen(false)} />
                   <ThemeMenu className="mt-6" />
                 </SheetContent>

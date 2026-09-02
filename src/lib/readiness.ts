@@ -1,10 +1,12 @@
 import type {
   BusinessProfile,
+  CustomerJourneyTest,
   LaunchBlocker,
   LaunchReadiness,
   LaunchTask,
   OwnershipRecord,
 } from "./types";
+import { JOURNEY_DEFINITIONS } from "./customer-journey";
 
 /**
  * Deterministic launch readiness helper shared by Dashboard and Checklist.
@@ -42,7 +44,7 @@ export function getReadiness(
   tasks: LaunchTask[],
   business: BusinessProfile,
   ownership?: OwnershipRecord,
-  customerJourneyTest?: boolean,
+  customerJourneyTest?: CustomerJourneyTest | boolean,
 ): LaunchReadiness {
   const total = tasks.length;
   const overallCompletionPercent = total
@@ -158,27 +160,82 @@ export function getReadiness(
     }
   }
 
-  // 4 - Test primary action (critical)
+  // 4 - Test primary action / customer journey (critical / important)
   {
-    const id = "primary-action-test";
-    let outstanding: boolean;
-    if (typeof customerJourneyTest === "boolean") {
-      outstanding = !customerJourneyTest;
+    const isJourneyObject = typeof customerJourneyTest === "object" && customerJourneyTest !== null;
+    if (isJourneyObject) {
+      const journey = customerJourneyTest as CustomerJourneyTest;
+      const steps = journey.steps ?? [];
+      const hasBlocked = steps.some((s) => s.status === "blocked");
+      const hasNeeds = steps.some((s) => s.status === "needs_improvement");
+      const allPassed = steps.length > 0 && steps.every((s) => s.status === "passed");
+      const label =
+        journey.journeyType === "custom" && journey.customJourneyLabel?.trim()
+          ? journey.customJourneyLabel.trim()
+          : (JOURNEY_DEFINITIONS[journey.journeyType]?.label ?? journey.journeyType);
+      if (hasBlocked) {
+        const blockedLabels = steps
+          .filter((s) => s.status === "blocked")
+          .map((s) => s.label)
+          .join(", ");
+        blockers.push({
+          id: "customer-journey-blocked",
+          title: `Customer journey blocked: ${label}`,
+          description: `One or more steps are blocked — ${blockedLabels}. Fix these before inviting customers, or customers will not be able to complete this action.`,
+          severity: "critical",
+          relatedRoute: "/customer-journey",
+          actionLabel: "Fix journey",
+        });
+      } else if (hasNeeds) {
+        const needsLabels = steps
+          .filter((s) => s.status === "needs_improvement")
+          .map((s) => s.label)
+          .join(", ");
+        blockers.push({
+          id: "customer-journey-needs-improvement",
+          title: `Customer journey needs improvement: ${label}`,
+          description: `Some steps need improvement — ${needsLabels}. Review and improve these for a smoother customer experience.`,
+          severity: "important",
+          relatedRoute: "/customer-journey",
+          actionLabel: "Improve journey",
+        });
+      } else if (allPassed) {
+        // satisfied — no blocker; also mark that primary action is tested
+      } else {
+        // Not fully tested — show guidance blocker as critical until tested
+        const notTested = steps.filter((s) => s.status === "not_tested").length;
+        const tested = steps.length - notTested;
+        // Only show if journey exists but not completed — treat as important prompt, but spec says blocked primary journey must appear as critical; incomplete test should prompt testing
+        // Use critical to ensure visibility before launch
+        blockers.push({
+          id: "primary-action-test",
+          title: "Test your primary customer action end to end",
+          description: `You chose "${label}" as your main customer action. ${tested}/${steps.length} steps recorded. Complete the test on a real phone and record each outcome.`,
+          severity: "critical",
+          relatedTaskId: findTaskId(tasks, ["test your contact form"]),
+          relatedRoute: "/customer-journey",
+          actionLabel: "Test your key action",
+        });
+      }
     } else {
-      // Prefer contact form test; if ecommerce/booking, also consider related tasks but keep deterministic
-      outstanding = isTaskOutstanding(tasks, ["test your contact form"]);
-    }
-    if (outstanding) {
-      blockers.push({
-        id,
-        title: "Test your primary customer action end to end",
-        description:
-          "Submit the form, booking or checkout yourself and confirm the message or order reaches the right inbox.",
-        severity: "critical",
-        relatedTaskId: findTaskId(tasks, ["test your contact form"]),
-        relatedRoute: "/checklist",
-        actionLabel: "Test your key action",
-      });
+      let outstanding: boolean;
+      if (typeof customerJourneyTest === "boolean") {
+        outstanding = !customerJourneyTest;
+      } else {
+        outstanding = isTaskOutstanding(tasks, ["test your contact form"]);
+      }
+      if (outstanding) {
+        blockers.push({
+          id: "primary-action-test",
+          title: "Test your primary customer action end to end",
+          description:
+            "Submit the form, booking or checkout yourself and confirm the message or order reaches the right inbox.",
+          severity: "critical",
+          relatedTaskId: findTaskId(tasks, ["test your contact form"]),
+          relatedRoute: "/customer-journey",
+          actionLabel: "Test your key action",
+        });
+      }
     }
   }
 

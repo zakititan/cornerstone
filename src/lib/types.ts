@@ -108,6 +108,33 @@ export interface LaunchReadiness {
   nextRecommendedAction?: string | undefined;
 }
 
+export type CustomerJourneyType =
+  | "phone_call"
+  | "whatsapp_message"
+  | "contact_form"
+  | "booking"
+  | "online_purchase"
+  | "visit_location"
+  | "newsletter_signup"
+  | "custom";
+
+export type JourneyStepStatus = "not_tested" | "passed" | "needs_improvement" | "blocked";
+
+export interface CustomerJourneyStepResult {
+  id: string;
+  label: string;
+  status: JourneyStepStatus;
+  note?: string;
+}
+
+export interface CustomerJourneyTest {
+  journeyType: CustomerJourneyType;
+  customJourneyLabel?: string;
+  steps: CustomerJourneyStepResult[];
+  lastUpdatedAt: string;
+  completedAt?: string | null;
+}
+
 export interface AppState {
   onboardingComplete: boolean;
   onboardingStep: number;
@@ -119,4 +146,5 @@ export interface AppState {
   dnsRecords: DomainRecordEntry[];
   completedArticles: string[];
   account: { signedIn: boolean; fullName: string; email: string };
+  customerJourneyTest?: CustomerJourneyTest;
 }

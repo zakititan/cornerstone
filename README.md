@@ -77,13 +77,13 @@ The app does not claim that a domain is available unless a live domain lookup in
 
 An interactive decision tool guides owners toward a category of website setup rather than forcing a provider choice.
 
-| Setup category | Best suited to |
-| --- | --- |
-| Easy all-in-one website builder | Owners who want a straightforward, low-maintenance site quickly |
-| Ecommerce-first platform | Businesses selling products online |
-| Flexible CMS with managed hosting | Businesses needing more flexibility and room to grow |
+| Setup category                        | Best suited to                                                         |
+| ------------------------------------- | ---------------------------------------------------------------------- |
+| Easy all-in-one website builder       | Owners who want a straightforward, low-maintenance site quickly        |
+| Ecommerce-first platform              | Businesses selling products online                                     |
+| Flexible CMS with managed hosting     | Businesses needing more flexibility and room to grow                   |
 | Professional designer/developer build | Businesses with complex requirements or a larger implementation budget |
-| Simple one-page launch site | Owners who need an immediate, focused online presence |
+| Simple one-page launch site           | Owners who need an immediate, focused online presence                  |
 
 The matcher describes the advantages, trade-offs, maintenance expectations, feature fit, and questions owners should ask before purchasing.
 
@@ -160,49 +160,49 @@ The product includes guided workflow pages, support resources, account flows, le
 
 ### Planning and launch workflow
 
-| Route | Purpose |
-| --- | --- |
-| `/` | Product landing page and main entry point |
-| `/how-it-works` | Overview of the Launch Plan Buddy process |
-| `/onboarding` | Personalized plan creation flow |
-| `/dashboard` | Plan progress and next actions |
-| `/domains` | Domain guidance and domain-name exploration |
-| `/platform-matcher` | Website setup category recommendations |
-| `/connect-domain` | DNS and domain-connection guidance |
-| `/content` | Guided website-content workspace |
-| `/checklist` | Interactive launch checklist |
-| `/business-email` | Professional business-email planning |
-| `/get-found` | Search and local-presence basics |
-| `/maintenance` | Ongoing website-maintenance guidance |
-| `/ownership-record` | Digital ownership and account-access record |
-| `/hire-help` | Guidance for safely hiring a freelancer or agency |
+| Route               | Purpose                                           |
+| ------------------- | ------------------------------------------------- |
+| `/`                 | Product landing page and main entry point         |
+| `/how-it-works`     | Overview of the Launch Plan Buddy process         |
+| `/onboarding`       | Personalized plan creation flow                   |
+| `/dashboard`        | Plan progress and next actions                    |
+| `/domains`          | Domain guidance and domain-name exploration       |
+| `/platform-matcher` | Website setup category recommendations            |
+| `/connect-domain`   | DNS and domain-connection guidance                |
+| `/content`          | Guided website-content workspace                  |
+| `/checklist`        | Interactive launch checklist                      |
+| `/business-email`   | Professional business-email planning              |
+| `/get-found`        | Search and local-presence basics                  |
+| `/maintenance`      | Ongoing website-maintenance guidance              |
+| `/ownership-record` | Digital ownership and account-access record       |
+| `/hire-help`        | Guidance for safely hiring a freelancer or agency |
 
 ### Learning and support
 
-| Route | Purpose |
-| --- | --- |
-| `/learn` | Learning library |
-| `/help` | Searchable help center |
-| `/troubleshooting` | Guided paths for common domain, website, email, and access issues |
-| `/glossary` | Plain-language technical glossary |
-| `/contact` | Support, feedback, partnership, privacy, and accessibility contact form |
-| `/status` | Service-status page and future incident-history surface |
-| `/changelog` | Product release notes and updates |
+| Route              | Purpose                                                                 |
+| ------------------ | ----------------------------------------------------------------------- |
+| `/learn`           | Learning library                                                        |
+| `/help`            | Searchable help center                                                  |
+| `/troubleshooting` | Guided paths for common domain, website, email, and access issues       |
+| `/glossary`        | Plain-language technical glossary                                       |
+| `/contact`         | Support, feedback, partnership, privacy, and accessibility contact form |
+| `/status`          | Service-status page and future incident-history surface                 |
+| `/changelog`       | Product release notes and updates                                       |
 
 ### Account and legal
 
-| Route | Purpose |
-| --- | --- |
-| `/sign-in` | Existing-user sign-in |
-| `/create-account` | Account creation and plan-saving entry point |
-| `/forgot-password` | Privacy-safe password-reset request flow |
-| `/reset-password` | Password-reset route and invalid/expired-link fallback |
-| `/account` | Account overview |
-| `/settings` | Appearance, privacy, security, and support settings |
-| `/delete-account` | Account-deletion confirmation and request flow |
-| `/privacy` | Privacy information |
-| `/terms` | Terms and educational-guidance disclaimer |
-| `/accessibility` | Accessibility commitment and feedback information |
+| Route              | Purpose                                                |
+| ------------------ | ------------------------------------------------------ |
+| `/sign-in`         | Existing-user sign-in                                  |
+| `/create-account`  | Account creation and plan-saving entry point           |
+| `/forgot-password` | Privacy-safe password-reset request flow               |
+| `/reset-password`  | Password-reset route and invalid/expired-link fallback |
+| `/account`         | Account overview                                       |
+| `/settings`        | Appearance, privacy, security, and support settings    |
+| `/delete-account`  | Account-deletion confirmation and request flow         |
+| `/privacy`         | Privacy information                                    |
+| `/terms`           | Terms and educational-guidance disclaimer              |
+| `/accessibility`   | Accessibility commitment and feedback information      |
 
 ### Unknown paths
 

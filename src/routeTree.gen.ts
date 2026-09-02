@@ -20,6 +20,7 @@ import { Route as ConnectDomainRouteImport } from './routes/connect-domain'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ContentRouteImport } from './routes/content'
 import { Route as CreateAccountRouteImport } from './routes/create-account'
+import { Route as CustomerJourneyRouteImport } from './routes/customer-journey'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DeleteAccountRouteImport } from './routes/delete-account'
 import { Route as DomainsRouteImport } from './routes/domains'
@@ -95,6 +96,11 @@ const ContentRoute = ContentRouteImport.update({
 const CreateAccountRoute = CreateAccountRouteImport.update({
   id: '/create-account',
   path: '/create-account',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CustomerJourneyRoute = CustomerJourneyRouteImport.update({
+  id: '/customer-journey',
+  path: '/customer-journey',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -215,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
   '/create-account': typeof CreateAccountRoute
+  '/customer-journey': typeof CustomerJourneyRoute
   '/dashboard': typeof DashboardRoute
   '/delete-account': typeof DeleteAccountRoute
   '/domains': typeof DomainsRoute
@@ -249,6 +256,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
   '/create-account': typeof CreateAccountRoute
+  '/customer-journey': typeof CustomerJourneyRoute
   '/dashboard': typeof DashboardRoute
   '/delete-account': typeof DeleteAccountRoute
   '/domains': typeof DomainsRoute
@@ -284,6 +292,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
   '/create-account': typeof CreateAccountRoute
+  '/customer-journey': typeof CustomerJourneyRoute
   '/dashboard': typeof DashboardRoute
   '/delete-account': typeof DeleteAccountRoute
   '/domains': typeof DomainsRoute
@@ -320,6 +329,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/content'
     | '/create-account'
+    | '/customer-journey'
     | '/dashboard'
     | '/delete-account'
     | '/domains'
@@ -354,6 +364,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/content'
     | '/create-account'
+    | '/customer-journey'
     | '/dashboard'
     | '/delete-account'
     | '/domains'
@@ -388,6 +399,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/content'
     | '/create-account'
+    | '/customer-journey'
     | '/dashboard'
     | '/delete-account'
     | '/domains'
@@ -423,6 +435,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   ContentRoute: typeof ContentRoute
   CreateAccountRoute: typeof CreateAccountRoute
+  CustomerJourneyRoute: typeof CustomerJourneyRoute
   DashboardRoute: typeof DashboardRoute
   DeleteAccountRoute: typeof DeleteAccountRoute
   DomainsRoute: typeof DomainsRoute
@@ -523,6 +536,13 @@ declare module '@tanstack/react-router' {
       path: '/create-account'
       fullPath: '/create-account'
       preLoaderRoute: typeof CreateAccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/customer-journey': {
+      id: '/customer-journey'
+      path: '/customer-journey'
+      fullPath: '/customer-journey'
+      preLoaderRoute: typeof CustomerJourneyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -687,6 +707,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   ContentRoute: ContentRoute,
   CreateAccountRoute: CreateAccountRoute,
+  CustomerJourneyRoute: CustomerJourneyRoute,
   DashboardRoute: DashboardRoute,
   DeleteAccountRoute: DeleteAccountRoute,
   DomainsRoute: DomainsRoute,
@@ -712,13 +733,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

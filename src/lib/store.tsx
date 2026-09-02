@@ -1,8 +1,17 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import type {
   AppState,
   BusinessProfile,
   ContentDraft,
+  CustomerJourneyTest,
   LaunchTask,
   MaintenanceTask,
   OwnershipRecord,
@@ -30,6 +39,11 @@ interface StoreValue {
   toggleArticle: (slug: string) => void;
   signIn: (fullName: string, email: string) => void;
   signOut: () => void;
+  setCustomerJourneyTest: (test: CustomerJourneyTest | undefined) => void;
+  updateCustomerJourneyStep: (
+    id: string,
+    patch: Partial<import("./types").CustomerJourneyStepResult>,
+  ) => void;
 }
 
 const StoreContext = createContext<StoreValue | null>(null);
@@ -79,7 +93,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           ...s,
           tasks: s.tasks.map((t) =>
             t.id === id
-              ? { ...t, status, completedAt: status === "complete" ? new Date().toISOString() : null }
+              ? {
+                  ...t,
+                  status,
+                  completedAt: status === "complete" ? new Date().toISOString() : null,
+                }
               : t,
           ),
         })),
@@ -110,7 +128,21 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         })),
       signIn: (fullName, email) =>
         patch((s) => ({ ...s, account: { signedIn: true, fullName, email } })),
-      signOut: () => patch((s) => ({ ...s, account: { signedIn: false, fullName: "", email: "" } })),
+      signOut: () =>
+        patch((s) => ({ ...s, account: { signedIn: false, fullName: "", email: "" } })),
+      setCustomerJourneyTest: (test) => patch((s) => ({ ...s, customerJourneyTest: test })),
+      updateCustomerJourneyStep: (id, p) =>
+        patch((s) => {
+          if (!s.customerJourneyTest) return s;
+          return {
+            ...s,
+            customerJourneyTest: {
+              ...s.customerJourneyTest,
+              steps: s.customerJourneyTest.steps.map((st) => (st.id === id ? { ...st, ...p } : st)),
+              lastUpdatedAt: new Date().toISOString(),
+            },
+          };
+        }),
     }),
     [state, hydrated, patch],
   );

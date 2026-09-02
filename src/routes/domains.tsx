@@ -986,6 +986,24 @@ function DomainsPage() {
                   registration, but only a registrar can guarantee price and complete the purchase.
                   We do not provide purchase links.
                 </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <Button asChild variant="outline" size="sm">
+                    <Link to="/business-profile">Use in Business profile →</Link>
+                  </Button>
+                  <Button asChild variant="outline" size="sm">
+                    <Link to="/dashboard">Check readiness</Link>
+                  </Button>
+                  <Button asChild variant="outline" size="sm">
+                    <Link to="/ownership-record">Update ownership record</Link>
+                  </Button>
+                  <Button asChild variant="ghost" size="sm">
+                    <Link to="/hire-help">Prepare handoff brief →</Link>
+                  </Button>
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Shortlist feeds your preferred domain in Business profile, readiness checks,
+                  ownership record and hire-help brief.
+                </p>
               </>
             )}
           </section>

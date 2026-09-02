@@ -116,23 +116,26 @@ export function LaunchReadinessCard({
           </div>
           {blockers.length > 3 ? (
             <Button asChild variant="outline" size="sm" className="mt-3">
-              <a href="/checklist?filter=blockers">
+              <Link to="/checklist" search={{ filter: "blockers" } as never}>
                 View all launch checks <ExternalLink className="size-4" aria-hidden="true" />
-              </a>
+              </Link>
             </Button>
           ) : compact ? null : (
             <Button asChild variant="ghost" size="sm" className="mt-3">
-              <a href="/checklist?filter=blockers">View all launch checks →</a>
+              <Link to="/checklist" search={{ filter: "blockers" } as never}>
+                View all launch checks →
+              </Link>
             </Button>
           )}
           {!compact && blockers.length <= 3 ? (
             <p className="mt-2">
-              <a
-                href="/checklist?filter=blockers"
+              <Link
+                to="/checklist"
+                search={{ filter: "blockers" } as never}
                 className="text-xs text-muted-foreground underline underline-offset-4"
               >
                 View all launch checks
-              </a>
+              </Link>
             </p>
           ) : null}
         </div>
@@ -164,7 +167,9 @@ export function LaunchReadinessCard({
         )}
         {blockers.length ? (
           <Button asChild variant="outline" size="sm">
-            <a href="/checklist?filter=blockers">View all launch checks</a>
+            <Link to="/checklist" search={{ filter: "blockers" } as never}>
+              View all launch checks
+            </Link>
           </Button>
         ) : null}
       </div>

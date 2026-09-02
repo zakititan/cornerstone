@@ -12,6 +12,7 @@ import {
   Rocket,
   BookOpen,
   ClipboardCheck,
+  Building2,
 } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { ProgressRing } from "@/components/ProgressRing";
@@ -49,10 +50,11 @@ export const Route = createFileRoute("/dashboard")({
 
 const QUICK_TOOLS = [
   { to: "/domains", label: "Domain finder", icon: Globe },
+  { to: "/business-profile", label: "Business profile", icon: Building2 },
+  { to: "/customer-journey", label: "Journey tester", icon: ClipboardCheck },
   { to: "/connect-domain", label: "Connect domain", icon: Network },
   { to: "/content", label: "Content builder", icon: FileText },
   { to: "/checklist", label: "Launch checklist", icon: ListChecks },
-  { to: "/customer-journey", label: "Journey tester", icon: ClipboardCheck },
 ];
 
 function Dashboard() {

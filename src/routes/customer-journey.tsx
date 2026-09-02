@@ -680,13 +680,21 @@ function CustomerJourneyPage() {
                 <Link to="/checklist">Go to checklist</Link>
               </Button>
               <Button asChild variant="outline" size="sm">
+                <Link to="/hire-help">Hire help brief</Link>
+              </Button>
+              <Button asChild variant="outline" size="sm">
                 <Link to="/troubleshooting">Troubleshooting guide</Link>
               </Button>
               <Button asChild variant="outline" size="sm">
                 <Link to="/help">Help centre</Link>
               </Button>
               <Button asChild variant="ghost" size="sm">
-                <a href="/checklist?filter=blockers">View launch blockers →</a>
+                <Link to="/checklist" search={{ filter: "blockers" } as never}>
+                  View launch blockers →
+                </Link>
+              </Button>
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/dashboard">Back to dashboard</Link>
               </Button>
             </div>
           </section>

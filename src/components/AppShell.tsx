@@ -17,6 +17,8 @@ import {
   Rocket,
   ShieldCheck,
   LifeBuoy,
+  Building2,
+  ClipboardCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -104,6 +106,31 @@ export function AppShell({
             </span>
           </Link>
           <NavLinks />
+          <div
+            aria-label="Quick actions"
+            className="rounded-xl border border-sidebar-border bg-sidebar-accent/20 p-2"
+          >
+            <p className="px-2 pb-1 text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+              Quick actions
+            </p>
+            <Link
+              to="/business-profile"
+              className="flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/60"
+            >
+              <Building2 className="size-4" aria-hidden="true" />
+              Business profile
+            </Link>
+            <Link
+              to="/customer-journey"
+              className="flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/60"
+            >
+              <ClipboardCheck className="size-4" aria-hidden="true" />
+              Journey tester
+            </Link>
+            <p className="px-2 pt-1 text-[11px] leading-relaxed text-muted-foreground">
+              Also in Dashboard quick tools.
+            </p>
+          </div>
           <ThemeMenu className="mt-auto" />
           <p className=" px-2 text-xs text-muted-foreground">
             Educational guidance only. Pricing, eligibility and provider features vary.
@@ -129,6 +156,27 @@ export function AppShell({
                     Launch My Business Online
                   </SheetTitle>
                   <NavLinks onNavigate={() => setOpen(false)} />
+                  <div className="mt-4 rounded-xl border border-sidebar-border bg-sidebar-accent/20 p-2">
+                    <p className="px-2 pb-1 text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+                      Quick actions
+                    </p>
+                    <Link
+                      to="/business-profile"
+                      onClick={() => setOpen(false)}
+                      className="flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium"
+                    >
+                      <Building2 className="size-4" aria-hidden="true" />
+                      Business profile
+                    </Link>
+                    <Link
+                      to="/customer-journey"
+                      onClick={() => setOpen(false)}
+                      className="flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium"
+                    >
+                      <ClipboardCheck className="size-4" aria-hidden="true" />
+                      Journey tester
+                    </Link>
+                  </div>
                   <ThemeMenu className="mt-6" />
                 </SheetContent>
               </Sheet>

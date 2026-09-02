@@ -348,9 +348,14 @@ function ContentBuilder() {
                 call — as a stranger would.
               </p>
             </div>
-            <Button asChild size="sm" className="shrink-0">
-              <Link to="/customer-journey">Open journey tester →</Link>
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <Button asChild size="sm" className="shrink-0">
+                <Link to="/customer-journey">Open journey tester →</Link>
+              </Button>
+              <Button asChild variant="outline" size="sm" className="shrink-0">
+                <Link to="/hire-help">Hire help handoff →</Link>
+              </Button>
+            </div>
           </div>
         </section>
       </div>

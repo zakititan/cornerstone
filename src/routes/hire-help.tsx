@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ContentPageLayout, ContentSection, SafetyWarningBanner } from "@/components/ContentPage";
+import { Callout } from "@/components/Callouts";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -145,7 +146,14 @@ function HireHelpPage() {
           check reviews and ask for two recent examples you can visit yourself. We do not run a
           directory and we are not paid to recommend anyone.
         </p>
+        <Callout tone="info" title="Bring your business profile to the handoff">
+          Share a snapshot of your business profile — name, what you sell, service area, hours and
+          contact — so a helper quotes accurately and you keep ownership in your own accounts.
+        </Callout>
         <div className="flex flex-wrap gap-2 pt-1">
+          <Button asChild variant="outline">
+            <Link to="/business-profile">Review business profile</Link>
+          </Button>
           <Button asChild variant="outline">
             <Link to="/ownership-record">Fill in your ownership record</Link>
           </Button>

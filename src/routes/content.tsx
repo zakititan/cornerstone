@@ -245,6 +245,15 @@ function ContentBuilder() {
           Answer the prompts in ordinary language, as if a customer asked you in person. Everything
           saves to this device automatically.
         </Callout>
+        <div className="surface-panel flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-muted-foreground">
+            Your business profile pre-fills names, hours and contact here. Keep it current for
+            accurate drafts.
+          </p>
+          <Button asChild variant="outline" size="sm" className="shrink-0">
+            <Link to="/business-profile">Edit business profile →</Link>
+          </Button>
+        </div>
 
         <Tabs defaultValue="home">
           <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1">

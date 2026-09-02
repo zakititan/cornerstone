@@ -1,7 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { Callout } from "@/components/Callouts";
 import { GlossaryTooltip } from "@/components/GlossaryTooltip";
+import { Button } from "@/components/ui/button";
 import {
   Accordion,
   AccordionContent,
@@ -125,6 +126,16 @@ function GetFound() {
             single highest-value task on this page. Do it before anything else here.
           </Callout>
         ) : null}
+
+        <div className="surface-panel flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-muted-foreground">
+            Your business profile keeps name, address and hours identical for listings — update it
+            once, use everywhere.
+          </p>
+          <Button asChild variant="outline" size="sm" className="shrink-0">
+            <Link to="/business-profile">Open business profile →</Link>
+          </Button>
+        </div>
 
         <section>
           <h2 className="font-display text-xl font-bold">The foundations, in order</h2>

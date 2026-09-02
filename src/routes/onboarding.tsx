@@ -628,6 +628,22 @@ function Onboarding() {
                     Your roadmap is general educational guidance. Review provider documentation and
                     seek qualified professional advice when needed.
                   </p>
+                  <div className="rounded-xl border border-border bg-muted/30 p-3 text-sm">
+                    <p className="font-medium">Next: fine-tune your business profile</p>
+                    <p className="text-muted-foreground">
+                      After generation you can refine everything in one place — basics, location,
+                      contact, brand and online setup — and it stays in sync with content, journey
+                      and handoff.
+                    </p>
+                    <p className="mt-1">
+                      <Link
+                        to="/business-profile"
+                        className="font-medium text-primary underline underline-offset-4"
+                      >
+                        Open business profile →
+                      </Link>
+                    </p>
+                  </div>
                 </>
               )}
             </div>

@@ -123,6 +123,10 @@ export function getJourneySteps(type: CustomerJourneyType, customLabel?: string)
 }
 
 export function inferDefaultJourney(business: BusinessProfile): CustomerJourneyType {
+  // Phase 4: business profile explicit action takes precedence
+  const explicit = (business.primaryCustomerAction ?? "").trim() as CustomerJourneyType;
+  if (explicit && JOURNEY_DEFINITIONS[explicit]) return explicit;
+
   const needs = business.needs ?? [];
   const goal = (business.primaryGoal ?? "").toLowerCase();
   const has = (n: string) => needs.includes(n);

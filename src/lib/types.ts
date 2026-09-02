@@ -31,6 +31,34 @@ export interface BusinessProfile {
   brandAssets: string[];
   needsContentHelp: Confidence | "";
   needsBusinessEmail: Confidence | "";
+  // Phase 4: unified business profile extensions
+  targetCustomers: string;
+  servicesOffered: string;
+  differentiator: string;
+  address: string;
+  serviceAreas: string;
+  hoursDetail: string;
+  deliveryNotes: string;
+  primaryCustomerAction: CustomerJourneyType | "";
+  phone: string;
+  whatsappNumber: string;
+  businessEmail: string;
+  contactFormUrl: string;
+  bookingUrl: string;
+  storeUrl: string;
+  preferredContactMethod: string;
+  logoAvailable: Confidence | "";
+  brandColors: string;
+  photoReady: Confidence | "";
+  testimonialsAvailable: Confidence | "";
+  qualifications: string;
+  socialLinks: string;
+  policiesNeeded: string[];
+  websiteApproach: string;
+  preferredDomain: string;
+  domainPurchased: Confidence | "";
+  existingWebsiteStatus: string;
+  businessEmailStatus: string;
 }
 
 export interface LaunchTask {

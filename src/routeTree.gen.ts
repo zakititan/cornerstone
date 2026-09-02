@@ -14,6 +14,7 @@ import { Route as SplatRouteImport } from './routes/$'
 import { Route as AccessibilityRouteImport } from './routes/accessibility'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as BusinessEmailRouteImport } from './routes/business-email'
+import { Route as BusinessProfileRouteImport } from './routes/business-profile'
 import { Route as ChangelogRouteImport } from './routes/changelog'
 import { Route as ChecklistRouteImport } from './routes/checklist'
 import { Route as ConnectDomainRouteImport } from './routes/connect-domain'
@@ -66,6 +67,11 @@ const AccountRoute = AccountRouteImport.update({
 const BusinessEmailRoute = BusinessEmailRouteImport.update({
   id: '/business-email',
   path: '/business-email',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BusinessProfileRoute = BusinessProfileRouteImport.update({
+  id: '/business-profile',
+  path: '/business-profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChangelogRoute = ChangelogRouteImport.update({
@@ -215,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/accessibility': typeof AccessibilityRoute
   '/account': typeof AccountRoute
   '/business-email': typeof BusinessEmailRoute
+  '/business-profile': typeof BusinessProfileRoute
   '/changelog': typeof ChangelogRoute
   '/checklist': typeof ChecklistRoute
   '/connect-domain': typeof ConnectDomainRoute
@@ -250,6 +257,7 @@ export interface FileRoutesByTo {
   '/accessibility': typeof AccessibilityRoute
   '/account': typeof AccountRoute
   '/business-email': typeof BusinessEmailRoute
+  '/business-profile': typeof BusinessProfileRoute
   '/changelog': typeof ChangelogRoute
   '/checklist': typeof ChecklistRoute
   '/connect-domain': typeof ConnectDomainRoute
@@ -286,6 +294,7 @@ export interface FileRoutesById {
   '/accessibility': typeof AccessibilityRoute
   '/account': typeof AccountRoute
   '/business-email': typeof BusinessEmailRoute
+  '/business-profile': typeof BusinessProfileRoute
   '/changelog': typeof ChangelogRoute
   '/checklist': typeof ChecklistRoute
   '/connect-domain': typeof ConnectDomainRoute
@@ -323,6 +332,7 @@ export interface FileRouteTypes {
     | '/accessibility'
     | '/account'
     | '/business-email'
+    | '/business-profile'
     | '/changelog'
     | '/checklist'
     | '/connect-domain'
@@ -358,6 +368,7 @@ export interface FileRouteTypes {
     | '/accessibility'
     | '/account'
     | '/business-email'
+    | '/business-profile'
     | '/changelog'
     | '/checklist'
     | '/connect-domain'
@@ -393,6 +404,7 @@ export interface FileRouteTypes {
     | '/accessibility'
     | '/account'
     | '/business-email'
+    | '/business-profile'
     | '/changelog'
     | '/checklist'
     | '/connect-domain'
@@ -429,6 +441,7 @@ export interface RootRouteChildren {
   AccessibilityRoute: typeof AccessibilityRoute
   AccountRoute: typeof AccountRoute
   BusinessEmailRoute: typeof BusinessEmailRoute
+  BusinessProfileRoute: typeof BusinessProfileRoute
   ChangelogRoute: typeof ChangelogRoute
   ChecklistRoute: typeof ChecklistRoute
   ConnectDomainRoute: typeof ConnectDomainRoute
@@ -494,6 +507,13 @@ declare module '@tanstack/react-router' {
       path: '/business-email'
       fullPath: '/business-email'
       preLoaderRoute: typeof BusinessEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/business-profile': {
+      id: '/business-profile'
+      path: '/business-profile'
+      fullPath: '/business-profile'
+      preLoaderRoute: typeof BusinessProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/changelog': {
@@ -701,6 +721,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccessibilityRoute: AccessibilityRoute,
   AccountRoute: AccountRoute,
   BusinessEmailRoute: BusinessEmailRoute,
+  BusinessProfileRoute: BusinessProfileRoute,
   ChangelogRoute: ChangelogRoute,
   ChecklistRoute: ChecklistRoute,
   ConnectDomainRoute: ConnectDomainRoute,
@@ -733,3 +754,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

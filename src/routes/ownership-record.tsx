@@ -183,6 +183,9 @@ function OwnershipRecordPage() {
               <Link to="/domains">Domain finder</Link>
             </Button>
             <Button asChild variant="outline" size="sm">
+              <Link to="/business-profile">Business profile</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
               <Link to="/maintenance">Maintenance reminders</Link>
             </Button>
             <Button asChild variant="ghost" size="sm">

@@ -343,6 +343,48 @@ export function getReadiness(
     }
   }
 
+  // 9 - Business essentials (unified profile) — critical if core details missing
+  {
+    const id = "business-essentials";
+    const missingName = !business.businessName.trim();
+    const missingDescription = !business.description.trim();
+    const needsLocation = business.customerModel !== "online" && business.customerModel !== "";
+    const missingLocation = needsLocation
+      ? !business.location.trim() && !(business.address ?? "").trim()
+      : false;
+    const action = (business.primaryCustomerAction ?? "").toString().trim();
+    const phone = (business.phone ?? "").trim();
+    const whatsapp = (business.whatsappNumber ?? "").trim();
+    const email = (business.businessEmail ?? "").trim();
+    const contactForm = (business.contactFormUrl ?? "").trim();
+    const booking = (business.bookingUrl ?? "").trim();
+    const store = (business.storeUrl ?? "").trim();
+    const missingContact =
+      !action && !phone && !whatsapp && !email && !contactForm && !booking && !store;
+
+    const missing: string[] = [];
+    if (missingName) missing.push("business name");
+    if (missingDescription) missing.push("description");
+    if (missingLocation) missing.push("location for local customers");
+    if (missingContact) missing.push("primary customer action or contact method");
+
+    if (missing.length > 0) {
+      const title = "Complete business essentials in your profile";
+      const description =
+        missing.length === 1
+          ? `Missing ${missing[0]}. Add it in Business profile so customers know how to reach you and downstream pages stay accurate.`
+          : `Missing ${missing.join(", ")}. Fill these in Business profile so greetings, content builder, journey tester and discoverability use the right details.`;
+      blockers.push({
+        id,
+        title,
+        description,
+        severity: "critical",
+        relatedRoute: "/business-profile",
+        actionLabel: "Complete business profile",
+      });
+    }
+  }
+
   // Status determination
   let status: LaunchReadiness["status"];
   if (!total) {

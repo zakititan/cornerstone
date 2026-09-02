@@ -316,17 +316,32 @@ function Dashboard() {
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Snapshot */}
           <section aria-labelledby="snapshot" className="surface-panel p-5">
-            <h2 id="snapshot" className="font-display text-lg font-bold">
-              Your business snapshot
-            </h2>
+            <div className="flex flex-wrap items-start justify-between gap-2">
+              <h2 id="snapshot" className="font-display text-lg font-bold">
+                Your business snapshot
+              </h2>
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/business-profile">Business profile →</Link>
+              </Button>
+            </div>
             <dl className="mt-4 space-y-3 text-sm">
               {[
                 ["Business", state.business.businessName],
                 ["Category", state.business.category],
-                ["Location", state.business.location],
+                ["Location", state.business.location || state.business.address],
                 ["Main goal", state.business.primaryGoal],
+                [
+                  "Customer action",
+                  state.business.primaryCustomerAction ? state.business.primaryCustomerAction : "—",
+                ],
                 ["Website needs", state.business.needs.join(", ")],
-                ["Comfort with technology", state.business.techComfort],
+                [
+                  "Contact",
+                  state.business.phone ||
+                    state.business.businessEmail ||
+                    state.business.contactFormUrl ||
+                    "—",
+                ],
               ].map(([k, v]) => (
                 <div
                   key={k}
@@ -337,9 +352,17 @@ function Dashboard() {
                 </div>
               ))}
             </dl>
-            <Button asChild variant="outline" size="sm" className="mt-4">
-              <Link to="/account">Edit business details</Link>
-            </Button>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Button asChild variant="outline" size="sm">
+                <Link to="/business-profile">Edit in Business profile</Link>
+              </Button>
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/account">My plan & ownership</Link>
+              </Button>
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">
+              Business profile feeds greetings, content builder, journey tester and get-found.
+            </p>
           </section>
 
           {/* Recent activity */}

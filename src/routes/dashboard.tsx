@@ -128,6 +128,16 @@ function Dashboard() {
 
   const stageLabel = PHASES.find((p) => p.key === stage)?.title ?? "Plan";
   const completed = tasks.filter((t) => t.status === "complete").length;
+  const stageToolRoutes: Record<string, string[]> = {
+    plan: ["/business-profile", "/cost-calculator", "/domains", "/launch-wizard"],
+    domain: ["/domains", "/business-email", "/connect-domain", "/security-drill"],
+    setup: ["/platform-matcher", "/content", "/business-email", "/cost-calculator"],
+    build: ["/content", "/email-signature", "/review-kit", "/launch-dossier"],
+    connect: ["/connect-domain", "/preflight", "/customer-journey", "/security-drill"],
+    launch: ["/preflight", "/customer-journey", "/review-kit", "/email-signature"],
+    grow: ["/get-found", "/review-kit", "/maintenance", "/cost-calculator"],
+  };
+  const stageTools = QUICK_TOOLS.filter((tool) => stageToolRoutes[stage]?.includes(tool.to));
 
   return (
     <AppShell
@@ -537,10 +547,10 @@ function Dashboard() {
         <div className="grid gap-6 lg:grid-cols-2">
           <section aria-labelledby="tools" className="surface-panel p-5">
             <h2 id="tools" className="font-display text-lg font-bold">
-              Quick tools
+              Useful right now
             </h2>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              {QUICK_TOOLS.map((t) => (
+              {stageTools.map((t) => (
                 <Link
                   key={t.to}
                   to={t.to}

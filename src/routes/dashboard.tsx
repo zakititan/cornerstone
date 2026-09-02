@@ -21,7 +21,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useStore } from "@/lib/store";
-import { PHASES, currentStage, progressPercent, remainingEffort } from "@/lib/plan";
+import { PHASES, currentStage, progressPercent } from "@/lib/plan";
+import { getReadiness } from "@/lib/readiness";
+import { LaunchReadinessCard } from "@/components/LaunchReadinessCard";
 import { ARTICLES } from "@/lib/library";
 import { cn } from "@/lib/utils";
 
@@ -58,6 +60,10 @@ function Dashboard() {
   const tasks = state.tasks;
   const percent = progressPercent(tasks);
   const stage = currentStage(tasks);
+  const readiness = useMemo(
+    () => getReadiness(tasks, state.business, state.ownership),
+    [tasks, state.business, state.ownership],
+  );
   const nextTask = useMemo(
     () => tasks.find((t) => t.status === "in_progress") ?? tasks.find((t) => t.status !== "complete"),
     [tasks],
@@ -147,16 +153,6 @@ function Dashboard() {
           </div>
 
           <div className="surface-panel p-5">
-            <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-              Launch readiness
-            </p>
-            <p className="mt-2 font-display text-lg font-semibold">{remainingEffort(tasks)}</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Target: {state.business.timeline || "flexible"}
-            </p>
-          </div>
-
-          <div className="surface-panel p-5">
             <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Current stage</p>
             <p className="mt-2 font-display text-lg font-semibold">{stageLabel}</p>
             <div className="mt-3 flex flex-wrap gap-1.5">
@@ -177,7 +173,17 @@ function Dashboard() {
               ))}
             </div>
           </div>
+
+          <div className="surface-panel p-5">
+            <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Target timeline</p>
+            <p className="mt-2 font-display text-lg font-semibold">{state.business.timeline || "flexible"}</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {readiness.completedRequiredTasks} of {readiness.totalRequiredTasks} required done
+            </p>
+          </div>
         </div>
+
+        <LaunchReadinessCard readiness={readiness} />
 
         {/* Next step detail */}
         {nextTask ? (

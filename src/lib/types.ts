@@ -85,6 +85,29 @@ export interface OwnershipRecord {
   notes: string;
 }
 
+export type ReadinessStatus = "not_started" | "blocked" | "nearly_ready" | "ready_for_review";
+export type LaunchBlockerSeverity = "critical" | "important";
+
+export interface LaunchBlocker {
+  id: string;
+  title: string;
+  description: string;
+  severity: LaunchBlockerSeverity;
+  relatedTaskId?: string | undefined;
+  relatedRoute?: string | undefined;
+  actionLabel?: string | undefined;
+}
+
+export interface LaunchReadiness {
+  status: ReadinessStatus;
+  overallCompletionPercent: number;
+  requiredCompletionPercent: number;
+  completedRequiredTasks: number;
+  totalRequiredTasks: number;
+  blockers: LaunchBlocker[];
+  nextRecommendedAction?: string | undefined;
+}
+
 export interface AppState {
   onboardingComplete: boolean;
   onboardingStep: number;

@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { ListChecks, Plus, Printer } from "lucide-react";
+import { createFileRoute, Link, useRouterState } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
+import { AlertTriangle, Info, ListChecks, Plus, Printer } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { EmptyState } from "@/components/EmptyState";
@@ -20,6 +20,9 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { useStore } from "@/lib/store";
 import { PHASES, progressPercent } from "@/lib/plan";
+import { getReadiness } from "@/lib/readiness";
+import { LaunchReadinessCard } from "@/components/LaunchReadinessCard";
+import { ReadinessStatusBadge } from "@/components/ReadinessStatusBadge";
 import type { Importance, PhaseKey, TaskStatus } from "@/lib/types";
 
 export const Route = createFileRoute("/checklist")({
@@ -49,16 +52,39 @@ function Checklist() {
   const [adding, setAdding] = useState(false);
   const [draft, setDraft] = useState({ title: "", description: "", phase: "plan" as PhaseKey });
 
-  const filtered = useMemo(
-    () =>
-      state.tasks.filter(
-        (t) =>
-          (phase === "all" || t.phase === phase) &&
-          (status === "all" || t.status === status) &&
-          (importance === "all" || t.importance === importance),
-      ),
-    [state.tasks, phase, status, importance],
+  const readiness = useMemo(
+    () => getReadiness(state.tasks, state.business, state.ownership),
+    [state.tasks, state.business, state.ownership],
   );
+
+  const searchStr = useRouterState({ select: (s) => s.location.searchStr }) as string;
+  const searchParams = useMemo(() => new URLSearchParams(searchStr), [searchStr]);
+  const initialBlocker = searchParams.get("filter") === "blockers";
+  const [blockerOnly, setBlockerOnly] = useState(initialBlocker);
+  useEffect(() => {
+    if (searchParams.get("filter") === "blockers") setBlockerOnly(true);
+  }, [searchParams]);
+
+  const blockerMap = useMemo(() => {
+    const m = new Map<string, (typeof readiness.blockers)[number]>();
+    for (const b of readiness.blockers) {
+      if (b.relatedTaskId) m.set(b.relatedTaskId, b);
+    }
+    return m;
+  }, [readiness.blockers]);
+
+  const filtered = useMemo(() => {
+    let tasks = state.tasks.filter(
+      (t) =>
+        (phase === "all" || t.phase === phase) &&
+        (status === "all" || t.status === status) &&
+        (importance === "all" || t.importance === importance),
+    );
+    if (blockerOnly) {
+      tasks = tasks.filter((t) => blockerMap.has(t.id) && t.status !== "complete");
+    }
+    return tasks;
+  }, [state.tasks, phase, status, importance, blockerOnly, blockerMap]);
 
   const percent = progressPercent(state.tasks);
 
@@ -88,6 +114,8 @@ function Checklist() {
       }
     >
       <div className="space-y-6">
+        <LaunchReadinessCard readiness={readiness} />
+
         <section className="surface-panel p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -98,13 +126,21 @@ function Checklist() {
               <p className="text-sm text-muted-foreground">
                 Steady progress beats perfect progress. One task today is enough.
               </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {readiness.completedRequiredTasks} of {readiness.totalRequiredTasks} required steps · {readiness.requiredCompletionPercent}% required
+              </p>
             </div>
-            <Badge className="bg-primary-soft text-primary">{percent}% ready</Badge>
+            <div className="flex flex-col items-end gap-2">
+              <ReadinessStatusBadge status={readiness.status} />
+              <Badge className="bg-primary-soft text-primary">{percent}% overall</Badge>
+            </div>
           </div>
-          <Progress value={percent} className="mt-4" />
+          <Progress value={percent} className="mt-4" aria-label={`Overall progress ${percent} percent`} />
+          <Progress value={readiness.requiredCompletionPercent} className="mt-2 h-1.5 bg-warning/20" aria-label={`Required progress ${readiness.requiredCompletionPercent} percent`} />
+          <p className="mt-2 text-xs text-muted-foreground">Overall and required progress are shown separately — both use semantic colors plus text and icons, not color alone.</p>
         </section>
 
-        <section className="grid gap-3 sm:grid-cols-3">
+        <section className="grid gap-3 sm:grid-cols-3 lg:grid-cols-4">
           <div className="space-y-1.5">
             <Label htmlFor="f-phase">Phase</Label>
             <Select value={phase} onValueChange={setPhase}>
@@ -149,6 +185,29 @@ function Checklist() {
               </SelectContent>
             </Select>
           </div>
+          <div className="space-y-1.5">
+            <Label>Launch blockers</Label>
+            <Button
+              variant={blockerOnly ? "default" : "outline"}
+              size="sm"
+              onClick={() => setBlockerOnly((v) => !v)}
+              aria-pressed={blockerOnly}
+              className="w-full justify-center"
+            >
+              <AlertTriangle className="size-4" aria-hidden="true" />
+              {blockerOnly ? "Showing blockers only" : "Show blockers only"}
+              {readiness.blockers.length ? ` (${readiness.blockers.length})` : ""}
+            </Button>
+            {blockerOnly ? (
+              <button
+                type="button"
+                onClick={() => setBlockerOnly(false)}
+                className="w-full text-center text-xs text-muted-foreground underline underline-offset-4"
+              >
+                Clear filter
+              </button>
+            ) : null}
+          </div>
         </section>
 
         {PHASES.map((p) => {
@@ -163,14 +222,37 @@ function Checklist() {
                 <p className="text-sm text-muted-foreground">{p.why}</p>
               </div>
               <div className="space-y-3">
-                {tasks.map((t) => (
-                  <LaunchTaskCard
-                    key={t.id}
-                    task={t}
-                    onStatus={(s: TaskStatus) => setTaskStatus(t.id, s)}
-                    onUpdate={(patch) => updateTask(t.id, patch)}
-                  />
-                ))}
+                {tasks.map((t) => {
+                  const blocker = blockerMap.get(t.id);
+                  const showBlocker = Boolean(blocker && t.status !== "complete");
+                  return (
+                    <div key={t.id} className="space-y-2">
+                      {showBlocker ? (
+                        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-warning/25 bg-warning-soft/40 px-3 py-2 text-xs">
+                          <span className="inline-flex items-center gap-1.5 font-semibold text-warning-foreground">
+                            {blocker!.severity === "critical" ? (
+                              <AlertTriangle className="size-3.5" aria-hidden="true" />
+                            ) : (
+                              <Info className="size-3.5" aria-hidden="true" />
+                            )}
+                            Launch blocker — {blocker!.severity}
+                          </span>
+                          <span className="text-muted-foreground">· {blocker!.description}</span>
+                          {blocker!.relatedRoute ? (
+                            <Link to={blocker!.relatedRoute} className="font-medium text-primary underline underline-offset-4">
+                              {blocker!.actionLabel ?? "Review"} →
+                            </Link>
+                          ) : null}
+                        </div>
+                      ) : null}
+                      <LaunchTaskCard
+                        task={t}
+                        onStatus={(s: TaskStatus) => setTaskStatus(t.id, s)}
+                        onUpdate={(patch) => updateTask(t.id, patch)}
+                      />
+                    </div>
+                  );
+                })}
               </div>
             </section>
           );

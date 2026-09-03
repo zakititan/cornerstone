@@ -110,6 +110,7 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
           <div key={group.label} className="rounded-lg">
             <button
               type="button"
+              aria-expanded={expanded}
               onClick={() =>
                 setOpenGroups((groups) =>
                   expanded
@@ -191,6 +192,11 @@ function ToolSearch({
               {label}
             </Link>
           ))}
+          {!matches.length && query.trim() ? (
+            <p className="px-3 py-2 text-sm text-muted-foreground">
+              No tools matched. Try “domain”, “email”, or “launch”.
+            </p>
+          ) : null}
         </div>
       </DialogContent>
     </Dialog>

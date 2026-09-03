@@ -23,6 +23,7 @@ import {
   Star,
   ShieldAlert,
   ChevronDown,
+  Gauge,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -69,6 +70,7 @@ const NAV_GROUPS = [
       { to: "/email-signature", label: "Create email signature", icon: Mail },
       { to: "/cost-calculator", label: "Plan my budget", icon: Calculator },
       { to: "/maintenance", label: "Keep it running", icon: Wrench },
+      { to: "/growth-toolkit", label: "Growth toolkit", icon: Gauge },
     ],
   },
   {

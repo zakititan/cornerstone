@@ -383,9 +383,13 @@ export function AppShell({
                     {currentGroup.label} <span aria-hidden="true">/</span> {currentLink.label}
                   </p>
                 ) : null}
-                <h1 className="truncate font-display text-xl font-bold sm:text-2xl">{title}</h1>
+                <h1 className="line-clamp-2 font-display text-xl leading-tight font-bold sm:text-2xl">
+                  {title}
+                </h1>
                 {description ? (
-                  <p className="truncate text-sm text-muted-foreground">{description}</p>
+                  <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                    {description}
+                  </p>
                 ) : null}
               </div>
               <ThemeToggle />
@@ -409,7 +413,7 @@ export function AppShell({
       <ToolSearch open={searchOpen} onOpenChange={setSearchOpen} />
       <nav
         aria-label="Quick navigation"
-        className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-border bg-background/95 backdrop-blur lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
       >
         {MOBILE_NAV.map(({ to, label, icon: Icon }) => {
           const active = pathname === to;

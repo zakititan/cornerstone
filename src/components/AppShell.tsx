@@ -12,11 +12,15 @@ import {
   ListChecks,
   Globe,
   TrendingUp,
+  QrCode,
+  Smartphone,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ThemeMenu, ThemeToggle } from "@/components/ThemeToggle";
 import { CommandSearch } from "@/components/CommandSearch";
+import { PlanTransferModal } from "@/components/PlanTransferModal";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -29,6 +33,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { useStore } from "@/lib/store";
 import { NAV_GROUPS, ROUTE_HIERARCHY, getNextBestStep, type NavGroup } from "@/lib/navigation-data";
 import { getRecentTools, recordVisitedTool, type RecentTool } from "@/lib/recent-tools";
+import type { AppState } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 function GroupedNavLinks({
@@ -116,8 +121,43 @@ export function AppShell({
   actions?: ReactNode;
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [planTransferOpen, setPlanTransferOpen] = useState(false);
+  const [incomingPlan, setIncomingPlan] = useState<Partial<AppState> | null>(null);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const { state, lastSavedAt } = useStore();
+  const { state, lastSavedAt, restoreBackup } = useStore();
+
+  // Detect incoming plan in URL query params
+  useEffect(() => {
+    try {
+      const search = window.location.search;
+      if (search && search.includes("import_plan=")) {
+        const params = new URLSearchParams(search);
+        const importCode = params.get("import_plan");
+        if (importCode) {
+          const decoded = decodeURIComponent(atob(importCode));
+          const parsed = JSON.parse(decoded);
+          if (parsed && (parsed.business || parsed.tasks)) {
+            setIncomingPlan(parsed);
+          }
+        }
+      }
+    } catch {
+      /* ignore invalid import parameter */
+    }
+  }, []);
+
+  const handleConfirmImport = () => {
+    if (!incomingPlan) return;
+    const ok = restoreBackup(incomingPlan);
+    if (ok) {
+      toast.success("Plan successfully imported to this device!");
+      setIncomingPlan(null);
+      const cleanUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+    } else {
+      toast.error("Could not import plan data.");
+    }
+  };
 
   // Next best step
   const nextStep = useMemo(() => getNextBestStep(state), [state]);
@@ -347,6 +387,16 @@ export function AppShell({
                   )}
                 </div>
 
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPlanTransferOpen(true)}
+                  className="hidden sm:inline-flex text-xs gap-1.5 h-8"
+                >
+                  <QrCode className="size-3.5" />
+                  <span>Sync / Transfer</span>
+                </Button>
+
                 <ThemeToggle />
                 {actions}
               </div>
@@ -354,6 +404,47 @@ export function AppShell({
           </header>
 
           <main className="px-4 py-5 sm:px-6 lg:py-6">
+            {/* Incoming Plan Notification Banner */}
+            {incomingPlan && (
+              <div className="mb-5 rounded-xl border border-primary/40 bg-primary/10 p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                <div className="flex items-start gap-3">
+                  <div className="rounded-lg bg-primary text-primary-foreground p-1.5 mt-0.5">
+                    <Smartphone className="size-4" />
+                  </div>
+                  <div>
+                    <p className="text-xs sm:text-sm font-bold text-foreground">
+                      Incoming Plan Detected for "
+                      {incomingPlan.business?.name || "Transferred Business"}" (
+                      {incomingPlan.tasks?.length || 0} tasks)
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      This device received a launch plan transferred from another device. Would you
+                      like to import it?
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+                  <Button
+                    size="sm"
+                    onClick={handleConfirmImport}
+                    className="text-xs font-semibold h-8 gap-1.5"
+                  >
+                    Import Plan
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => {
+                      setIncomingPlan(null);
+                      window.history.replaceState({}, document.title, window.location.pathname);
+                    }}
+                    className="text-xs h-8 text-muted-foreground"
+                  >
+                    Dismiss
+                  </Button>
+                </div>
+              </div>
+            )}
             {/* Contextual Breadcrumbs and Return Path */}
             {!isDashboard && hierarchy && (
               <div className="mb-4 flex flex-wrap items-center justify-between gap-2 text-xs">
@@ -479,6 +570,8 @@ export function AppShell({
           <span>Menu</span>
         </button>
       </nav>
+
+      <PlanTransferModal open={planTransferOpen} onOpenChange={setPlanTransferOpen} />
     </div>
   );
 }

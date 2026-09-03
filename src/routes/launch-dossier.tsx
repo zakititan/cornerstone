@@ -291,11 +291,13 @@ This document certifies that full custody, credentials access, and master owners
       }
     >
       <div className="space-y-6">
-        <Callout tone="info" title="Permanent Business Asset Record">
-          Keep this document in your corporate records or share it with technical contractors. It
-          proves legal custody and records all critical DNS and server connections in one
-          centralized place.
-        </Callout>
+        <div className="print:hidden">
+          <Callout tone="info" title="Permanent Business Asset Record">
+            Keep this document in your corporate records or share it with technical contractors. It
+            proves legal custody and records all critical DNS and server connections in one
+            centralized place.
+          </Callout>
+        </div>
 
         {/* PRINTABLE DOSSIER CARD CONTAINER */}
         <div

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { BadgeCheck, Clock, StickyNote, User } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { ArrowUpRight, BadgeCheck, Clock, StickyNote, User } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import type { Importance, LaunchTask, TaskStatus } from "@/lib/types";
+import { getTaskToolLink } from "@/lib/task-tool-links";
 
 export function TaskStatusBadge({ status }: { status: TaskStatus }) {
   const map: Record<TaskStatus, { label: string; className: string }> = {
@@ -98,7 +100,7 @@ export function LaunchTaskCard({
             <span>{task.category}</span>
           </div>
 
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap items-center gap-2">
             {!done ? (
               <Button
                 size="sm"
@@ -108,6 +110,22 @@ export function LaunchTaskCard({
                 {task.status === "in_progress" ? "Pause this task" : "Start this task"}
               </Button>
             ) : null}
+            {(() => {
+              const toolLink = getTaskToolLink(task);
+              return (
+                <Button
+                  asChild
+                  size="sm"
+                  variant="outline"
+                  className="gap-1.5 text-xs text-primary border-primary/30 hover:bg-primary/5 hover:border-primary"
+                >
+                  <Link to={toolLink.to as never}>
+                    <span>{toolLink.label}</span>
+                    <ArrowUpRight className="size-3.5" aria-hidden="true" />
+                  </Link>
+                </Button>
+              );
+            })()}
             <Button size="sm" variant="ghost" onClick={() => setOpenNote((v) => !v)}>
               <StickyNote className="size-4" aria-hidden="true" />
               {task.notes ? "Edit note" : "Add note"}

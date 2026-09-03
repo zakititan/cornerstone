@@ -25,6 +25,8 @@ import {
   Download,
   Printer,
   ChevronRight,
+  Activity,
+  Wrench,
 } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
@@ -41,6 +43,8 @@ import { getReadiness } from "@/lib/readiness";
 import { getDnsImpactPreview } from "@/lib/online-presence";
 import { ReadinessStatusBadge } from "@/components/ReadinessStatusBadge";
 import { LaunchBlockerList } from "@/components/LaunchBlockerList";
+import { DomainHealthAudit } from "@/components/DomainHealthAudit";
+import { TechnicianBriefModal } from "@/components/TechnicianBriefModal";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/preflight")({
@@ -159,6 +163,7 @@ const CHECKS_LIST: DiagnosticCheck[] = [
 export function PreflightPage() {
   const { state } = useStore();
   const [activeTab, setActiveTab] = useState("simulator");
+  const [briefModalOpen, setBriefModalOpen] = useState(false);
   const readiness = useMemo(
     () => getReadiness(state.tasks, state.business, state.ownership, state.customerJourneyTest),
     [state.tasks, state.business, state.ownership, state.customerJourneyTest],
@@ -449,9 +454,12 @@ export function PreflightPage() {
 
         {/* Main Tabs: Sandbox Simulators vs Full Verification Checklist */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 p-1 max-w-md">
+          <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 p-1 max-w-2xl">
             <TabsTrigger value="simulator" className="text-xs font-bold gap-1.5">
               <Play className="size-3.5 text-primary" /> Interactive Sandboxes
+            </TabsTrigger>
+            <TabsTrigger value="dns_audit" className="text-xs font-bold gap-1.5">
+              <Activity className="size-3.5 text-indigo-500" /> Domain & Conflict Audit
             </TabsTrigger>
             <TabsTrigger value="checklist" className="text-xs font-bold gap-1.5">
               <ShieldCheck className="size-3.5 text-emerald-500" /> Go-Live Audit Checklist
@@ -953,8 +961,49 @@ export function PreflightPage() {
               </div>
             </div>
           </TabsContent>
+
+          {/* TAB 3: LIVE DOMAIN & CONFLICT AUDIT */}
+          <TabsContent value="dns_audit" className="space-y-4">
+            <div className="surface-panel p-5 sm:p-6 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:items-center justify-between gap-3 border-b pb-4">
+                <div className="space-y-1">
+                  <h3 className="font-display text-lg font-bold text-foreground">
+                    Domain Health, Record Conflicts & Security Audit
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    Query authoritative public DNS resolvers worldwide to verify SSL/TLS, CNAME apex
+                    conflicts, SPF deduplication, and DMARC enforcement before going live.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setBriefModalOpen(true)}
+                  className="gap-1.5 text-xs font-semibold shrink-0"
+                >
+                  <Wrench className="size-3.5" />
+                  <span>Generate Technician Brief</span>
+                </Button>
+              </div>
+
+              <DomainHealthAudit
+                initialDomain={domain}
+                expectedHosting={state.dnsPlanning?.targetPlatform}
+                usesBusinessEmail={state.dnsPlanning?.hasExistingEmail === "yes"}
+                onOpenTechnicianBrief={() => setBriefModalOpen(true)}
+              />
+            </div>
+          </TabsContent>
         </Tabs>
       </div>
+
+      <TechnicianBriefModal
+        open={briefModalOpen}
+        onOpenChange={setBriefModalOpen}
+        domainOverride={domain}
+        targetPlatformOverride={state.dnsPlanning?.targetPlatform}
+      />
     </AppShell>
   );
 }

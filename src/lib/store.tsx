@@ -321,26 +321,114 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         }),
       restoreBackup: (backup) => {
         if (!backup || typeof backup !== "object") return false;
-        const candidate = backup as Partial<AppState>;
-        if (!candidate.business || !Array.isArray(candidate.tasks)) return false;
+        type CompactTaskCandidate = {
+          id?: string;
+          i?: string;
+          status?: TaskStatus;
+          s?: TaskStatus;
+          notes?: string;
+          n?: string;
+          completedAt?: string | null;
+          c?: string | null;
+          title?: string;
+        };
+
+        type BackupCandidate = {
+          business?: Partial<BusinessProfile>;
+          b?: Partial<BusinessProfile>;
+          tasks?: (LaunchTask | CompactTaskCandidate)[];
+          t?: CompactTaskCandidate[];
+          ownership?: Partial<OwnershipRecord>;
+          o?: Partial<OwnershipRecord>;
+          maintenance?: MaintenanceTask[];
+          drafts?: Record<string, ContentDraft>;
+          d?: Record<string, ContentDraft>;
+          savedDomainIdeas?: SavedDomainIdea[];
+          sdi?: SavedDomainIdea[];
+          dnsPlanning?: Partial<DnsPlanningState>;
+          dp?: Partial<DnsPlanningState>;
+          onboardingComplete?: boolean;
+        };
+
+        const candidate = backup as BackupCandidate;
         const base = emptyState();
+
+        const candidateBusiness = candidate.business || candidate.b;
+        if (!candidateBusiness || typeof candidateBusiness !== "object") return false;
+
+        const mergedBusiness = { ...base.business, ...candidateBusiness };
+        const defaultTasks = generateTasks(mergedBusiness);
+
+        let restoredTasks = defaultTasks;
+        if (Array.isArray(candidate.tasks) && candidate.tasks.length > 0) {
+          if (typeof candidate.tasks[0]?.title === "string") {
+            // Full tasks array
+            restoredTasks = candidate.tasks as LaunchTask[];
+          } else {
+            // Compact tasks array [{ id, status, notes, completedAt }]
+            const updateMap = new Map<string, CompactTaskCandidate>();
+            candidate.tasks.forEach((t) => {
+              if (t && (t.id || t.i)) updateMap.set(t.id || t.i || "", t);
+            });
+            restoredTasks = defaultTasks.map((task) => {
+              const u = updateMap.get(task.id);
+              if (!u) return task;
+              return {
+                ...task,
+                status: u.status ?? u.s ?? task.status,
+                notes: u.notes ?? u.n ?? task.notes,
+                completedAt: u.completedAt ?? u.c ?? task.completedAt,
+              };
+            });
+          }
+        } else if (Array.isArray(candidate.t) && candidate.t.length > 0) {
+          const updateMap = new Map<string, CompactTaskCandidate>();
+          candidate.t.forEach((t) => {
+            if (t && (t.id || t.i)) updateMap.set(t.id || t.i || "", t);
+          });
+          restoredTasks = defaultTasks.map((task) => {
+            const u = updateMap.get(task.id);
+            if (!u) return task;
+            return {
+              ...task,
+              status: u.status ?? u.s ?? task.status,
+              notes: u.notes ?? u.n ?? task.notes,
+              completedAt: u.completedAt ?? u.c ?? task.completedAt,
+            };
+          });
+        }
+
+        const mergedOwnership = {
+          ...base.ownership,
+          ...(candidate.ownership || candidate.o || {}),
+        };
+        const mergedMaintenance = Array.isArray(candidate.maintenance)
+          ? candidate.maintenance
+          : base.maintenance;
+        const mergedDrafts = candidate.drafts || candidate.d || {};
+        const mergedSavedDomainIdeas = Array.isArray(candidate.savedDomainIdeas)
+          ? candidate.savedDomainIdeas
+          : Array.isArray(candidate.sdi)
+            ? candidate.sdi
+            : [];
+        const mergedDnsPlanning = {
+          ...defaultDnsPlanning,
+          ...(candidate.dnsPlanning || candidate.dp || {}),
+        };
+
         setState({
           ...base,
-          ...candidate,
-          business: { ...base.business, ...candidate.business },
-          ownership: { ...base.ownership, ...(candidate.ownership ?? {}) },
-          tasks: candidate.tasks,
-          maintenance: Array.isArray(candidate.maintenance)
-            ? candidate.maintenance
-            : base.maintenance,
-          drafts: candidate.drafts ?? {},
-          savedDomainIdeas: Array.isArray(candidate.savedDomainIdeas)
-            ? candidate.savedDomainIdeas
-            : [],
-          dnsPlanning: {
-            ...defaultDnsPlanning,
-            ...((candidate as AppState).dnsPlanning ?? {}),
-          },
+          business: mergedBusiness,
+          ownership: mergedOwnership,
+          tasks: restoredTasks,
+          maintenance: mergedMaintenance,
+          drafts: mergedDrafts,
+          savedDomainIdeas: mergedSavedDomainIdeas,
+          dnsPlanning: mergedDnsPlanning,
+          onboardingComplete:
+            candidate.onboardingComplete !== undefined
+              ? Boolean(candidate.onboardingComplete)
+              : true,
         });
         return true;
       },

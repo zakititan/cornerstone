@@ -39,11 +39,17 @@ function NotFoundComponent() {
 }
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
-  console.error(error);
   const router = useRouter();
   useEffect(() => {
+    if (error?.message?.includes("_nonReactive")) {
+      // Auto-recover from transient router match race condition
+      router.invalidate();
+      reset();
+      return;
+    }
+    console.error(error);
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
+  }, [error, reset, router]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">

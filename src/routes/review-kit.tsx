@@ -77,12 +77,16 @@ export function ReviewKitPage() {
 
   // Generate QR Code image
   useEffect(() => {
-    if (!reviewUrl) return;
+    if (!reviewUrl || reviewUrl.length > 2000) {
+      setQrDataUrl("");
+      return;
+    }
     QRCode.toDataURL(
       reviewUrl,
       {
         width: 480,
         margin: 2,
+        errorCorrectionLevel: "L",
         color: {
           dark: "#0f172a",
           light: "#ffffff",
@@ -91,6 +95,8 @@ export function ReviewKitPage() {
       (err, url) => {
         if (!err && url) {
           setQrDataUrl(url);
+        } else {
+          setQrDataUrl("");
         }
       },
     );

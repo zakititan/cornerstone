@@ -635,12 +635,77 @@ export const SERVICE_STATUSES: ServiceStatus[] = [
 export interface ChangelogEntryData {
   version: string;
   date: string;
-  area: "Appearance" | "Planning" | "Guides" | "Mobile" | "Accounts";
+  area:
+    | "Appearance"
+    | "Planning"
+    | "Guides"
+    | "Mobile"
+    | "Accounts"
+    | "Navigation"
+    | "Tools"
+    | "Growth"
+    | "Security"
+    | "AI";
   title: string;
   items: string[];
 }
 
 export const CHANGELOG: ChangelogEntryData[] = [
+  {
+    version: "1.8.0",
+    date: "3 September 2026",
+    area: "AI",
+    title: "Cornerstone AI Launch Assistant (GPT-5.6 Luna) & local knowledge base",
+    items: [
+      "Added floating AI Launch Assistant widget with plain-English conversational support for domains, DNS, business email, and launch roadmaps.",
+      "Integrated server-side OpenAI GPT-5.6 Luna (model gpt-5.6-luna enforced server-side via POST /api/ai/chat) with zero API keys exposed to the client.",
+      "Strict privacy & context minimization: only non-sensitive setup context (current route, business model, journey status, blocker count) is sent — no passwords, task notes, private emails, or DNS credentials.",
+      "Knowledge retrieval grounding: injected curated local excerpts from the Cornerstone library to prevent hallucinations and keep advice safe and practical.",
+      "Distributed Redis rate limiting (burst, hourly, and daily caps per session and IP) with graceful 429 Retry-After handling and server capacity protection.",
+      "Instant offline & private fallback: resilient local curated knowledge base (/troubleshooting and /glossary) with starter questions and direct workflow action links when AI is disabled, rate-limited, or unavailable.",
+      "Privacy-first consent controls: opt-in AI toggle in Settings (/settings) and within the widget (cornerstone_ai_consent), with local-only chat history limited to 6 messages and a one-click history purge.",
+    ],
+  },
+  {
+    version: "1.7.0",
+    date: "3 September 2026",
+    area: "Navigation",
+    title: "Complete navigation coverage & optimized plan transfer",
+    items: [
+      "Added Online Setup Map (/online-setup) to the primary left navigation under Build my website with full route hierarchy and breadcrumbs.",
+      "Added direct navigation buttons for Plan Setup Wizard, Growth Toolkit, How It Works, System Status, Changelog, and Support.",
+      "Pinned direct links to Privacy Policy, Terms of Service, and Accessibility Statement in desktop and mobile sidebars.",
+      "Optimized cross-device plan sync with ultra-compact QR payloads, camera capacity guardrails, and direct sync link fallbacks.",
+      "Universal Command Search (Cmd+K / /) updated to index every page, tool, and compliance guide across the application.",
+      "Resolved router preload race conditions for seamless link navigation and page transitions.",
+    ],
+  },
+  {
+    version: "1.6.0",
+    date: "3 September 2026",
+    area: "Tools",
+    title: "Interactive setup map, preflight inspector & launch dossier",
+    items: [
+      "Interactive Online Setup Map (/online-setup) visualizing the relationships between your domain registrar, DNS, web host, and email provider.",
+      "Preflight Launch Inspector (/preflight) auditing SSL certificates, mobile responsiveness, broken links, contact forms, and search engine readiness.",
+      "Launch Dossier (/launch-dossier) generating printable handoff dossiers with disaster recovery playbooks and digital asset deeds.",
+      "Security Drill & 2FA Simulator (/security-drill) with registrar locking simulations, authentication hardening, and emergency hijack response checklists.",
+    ],
+  },
+  {
+    version: "1.5.0",
+    date: "2 September 2026",
+    area: "Growth",
+    title: "Growth toolkit, customer journey simulation & review generator",
+    items: [
+      "Growth Toolkit (/growth-toolkit) with marketing campaign UTM link builders, Google search result snippet previews, and local SEO checklists.",
+      "Customer Journey Simulator (/customer-journey) to audit discovery-to-checkout flows and spot conversion friction before launch.",
+      "Google Review Generation Kit (/review-kit) providing quick review shortlink helpers, customer outreach templates, and printable QR code flyers.",
+      "Professional Email Signature Generator (/email-signature) producing copy-ready HTML and plain-text signatures for Gmail, Outlook, and Apple Mail.",
+      "True Cost of Ownership Calculator (/cost-calculator) forecasting recurring domain, hosting, and email expenses with DIY vs. agency breakdowns.",
+      "Agency & Contractor Hiring Guide (/hire-help) with project scope builders, technical vetting questions, and contract protection handrails.",
+    ],
+  },
   {
     version: "1.4.0",
     date: "2 September 2026",

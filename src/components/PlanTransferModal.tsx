@@ -36,6 +36,7 @@ interface PlanTransferModalProps {
 export function PlanTransferModal({ open, onOpenChange }: PlanTransferModalProps) {
   const { state, restoreBackup } = useStore();
   const [qrDataUrl, setQrDataUrl] = useState<string>("");
+  const [qrError, setQrError] = useState<string>("");
   const [syncUrl, setSyncUrl] = useState<string>("");
   const [rawSyncCode, setRawSyncCode] = useState<string>("");
   const [importCodeInput, setImportCodeInput] = useState<string>("");
@@ -46,18 +47,31 @@ export function PlanTransferModal({ open, onOpenChange }: PlanTransferModalProps
     if (!open) return;
 
     try {
-      // Create minimal transfer payload
+      // Build compact transfer payload for cross-device QR/link sync
+      const modifiedTasks = state.tasks
+        .filter((t) => t.status !== "todo" || (t.notes && t.notes.trim().length > 0))
+        .map((t) => ({
+          i: t.id,
+          s: t.status,
+          ...(t.notes?.trim() ? { n: t.notes.trim() } : {}),
+          ...(t.completedAt ? { c: t.completedAt } : {}),
+        }));
+
+      // Filter out empty dns planning fields
+      const compactDns: Record<string, unknown> = {};
+      if (state.dnsPlanning) {
+        Object.entries(state.dnsPlanning).forEach(([k, v]) => {
+          if (v) compactDns[k] = v;
+        });
+      }
+
+      // Compact payload preserves all business profile, ownership, task status/notes & DNS
       const payload = {
-        version: "1.0",
-        transferredAt: new Date().toISOString(),
-        business: state.business,
-        ownership: state.ownership,
-        tasks: state.tasks,
-        maintenance: state.maintenance,
-        drafts: state.drafts,
-        savedDomainIdeas: state.savedDomainIdeas,
-        dnsPlanning: state.dnsPlanning,
-        onboardingComplete: state.onboardingComplete,
+        v: 2,
+        b: state.business,
+        o: state.ownership,
+        t: modifiedTasks,
+        ...(Object.keys(compactDns).length > 0 ? { dp: compactDns } : {}),
       };
 
       const jsonString = JSON.stringify(payload);
@@ -69,19 +83,36 @@ export function PlanTransferModal({ open, onOpenChange }: PlanTransferModalProps
       const url = `${window.location.origin}/dashboard?import_plan=${encodeURIComponent(encoded)}`;
       setSyncUrl(url);
 
-      // Generate QR code for mobile scanning
-      QRCode.toDataURL(url, {
-        width: 240,
-        margin: 2,
-        color: {
-          dark: "#0f172a",
-          light: "#ffffff",
-        },
-      })
-        .then((dataUrl) => setQrDataUrl(dataUrl))
-        .catch((err) => console.error("QR Code error:", err));
+      // Check URL length against QR code limit (~2000 chars for clean scanning)
+      if (url.length > 2000) {
+        setQrError(
+          "Plan data exceeds camera QR code capacity. Use the sync link or file download below.",
+        );
+        setQrDataUrl("");
+      } else {
+        setQrError("");
+        QRCode.toDataURL(url, {
+          width: 240,
+          margin: 2,
+          errorCorrectionLevel: "L",
+          color: {
+            dark: "#0f172a",
+            light: "#ffffff",
+          },
+        })
+          .then((dataUrl) => {
+            setQrDataUrl(dataUrl);
+            setQrError("");
+          })
+          .catch((err) => {
+            console.warn("Could not generate QR code:", err?.message || err);
+            setQrError("Data too large for QR code. Use direct sync link below.");
+            setQrDataUrl("");
+          });
+      }
     } catch (err) {
-      console.error("Failed to generate transfer payload:", err);
+      console.warn("Failed to generate transfer payload:", err);
+      setQrError("Could not generate QR code. Use file backup instead.");
     }
   }, [open, state]);
 
@@ -209,6 +240,12 @@ export function PlanTransferModal({ open, onOpenChange }: PlanTransferModalProps
                     alt="Scan to transfer plan"
                     className="size-48 object-contain"
                   />
+                </div>
+              ) : qrError ? (
+                <div className="size-48 p-4 flex flex-col items-center justify-center bg-muted/50 rounded-xl border border-dashed border-border text-center">
+                  <QrCode className="size-8 text-muted-foreground mb-2" />
+                  <p className="text-xs font-semibold text-foreground mb-1">Large Plan Data</p>
+                  <p className="text-[11px] text-muted-foreground leading-tight">{qrError}</p>
                 </div>
               ) : (
                 <div className="size-48 flex items-center justify-center bg-muted rounded-xl">

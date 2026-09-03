@@ -109,6 +109,13 @@ function GroupedNavLinks({
   );
 }
 
+interface IncomingPlanData {
+  business?: { name?: string; businessName?: string };
+  b?: { name?: string; businessName?: string };
+  tasks?: unknown[];
+  t?: unknown[];
+}
+
 export function AppShell({
   title,
   description,
@@ -122,7 +129,7 @@ export function AppShell({
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [planTransferOpen, setPlanTransferOpen] = useState(false);
-  const [incomingPlan, setIncomingPlan] = useState<Partial<AppState> | null>(null);
+  const [incomingPlan, setIncomingPlan] = useState<IncomingPlanData | null>(null);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { state, lastSavedAt, restoreBackup } = useStore();
 
@@ -136,7 +143,7 @@ export function AppShell({
         if (importCode) {
           const decoded = decodeURIComponent(atob(importCode));
           const parsed = JSON.parse(decoded);
-          if (parsed && (parsed.business || parsed.tasks)) {
+          if (parsed && (parsed.business || parsed.tasks || parsed.b || parsed.v)) {
             setIncomingPlan(parsed);
           }
         }
@@ -278,8 +285,21 @@ export function AppShell({
             )}
           </div>
 
-          <div className="mt-auto space-y-3 pt-2 border-t border-sidebar-border/60">
+          <div className="mt-auto space-y-2.5 pt-2 border-t border-sidebar-border/60">
             <ThemeMenu />
+            <div className="px-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-muted-foreground">
+              <Link to="/privacy" className="hover:text-sidebar-foreground transition-colors">
+                Privacy
+              </Link>
+              <span className="text-muted-foreground/50">·</span>
+              <Link to="/terms" className="hover:text-sidebar-foreground transition-colors">
+                Terms
+              </Link>
+              <span className="text-muted-foreground/50">·</span>
+              <Link to="/accessibility" className="hover:text-sidebar-foreground transition-colors">
+                Accessibility
+              </Link>
+            </div>
             <p className="px-2 text-[11px] leading-relaxed text-muted-foreground">
               Educational guidance only. All data stays saved in your browser.
             </p>
@@ -357,6 +377,32 @@ export function AppShell({
                     )}
 
                     <ThemeMenu className="mt-6" />
+
+                    <div className="mt-4 px-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground border-t border-sidebar-border/50 pt-4">
+                      <Link
+                        to="/privacy"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="hover:text-sidebar-foreground transition-colors"
+                      >
+                        Privacy
+                      </Link>
+                      <span className="text-muted-foreground/50">·</span>
+                      <Link
+                        to="/terms"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="hover:text-sidebar-foreground transition-colors"
+                      >
+                        Terms
+                      </Link>
+                      <span className="text-muted-foreground/50">·</span>
+                      <Link
+                        to="/accessibility"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="hover:text-sidebar-foreground transition-colors"
+                      >
+                        Accessibility
+                      </Link>
+                    </div>
                   </SheetContent>
                 </Sheet>
 
@@ -414,8 +460,12 @@ export function AppShell({
                   <div>
                     <p className="text-xs sm:text-sm font-bold text-foreground">
                       Incoming Plan Detected for "
-                      {incomingPlan.business?.name || "Transferred Business"}" (
-                      {incomingPlan.tasks?.length || 0} tasks)
+                      {incomingPlan.business?.businessName ||
+                        incomingPlan.business?.name ||
+                        incomingPlan.b?.businessName ||
+                        incomingPlan.b?.name ||
+                        "Transferred Business"}
+                      "
                     </p>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       This device received a launch plan transferred from another device. Would you

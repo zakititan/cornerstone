@@ -21,6 +21,15 @@ import {
   LifeBuoy,
   UserRound,
   Settings,
+  Workflow,
+  Compass,
+  HelpCircle,
+  Users,
+  History,
+  Activity,
+  MessageSquare,
+  BookMarked,
+  Sparkles,
 } from "lucide-react";
 import type { AppState } from "./types";
 import { getReadiness } from "./readiness";
@@ -64,6 +73,12 @@ export const NAV_GROUPS: NavGroup[] = [
         icon: Building2,
         description: "Core business details",
       },
+      {
+        to: "/onboarding",
+        label: "Plan setup wizard",
+        icon: Sparkles,
+        description: "Personalized launch questions",
+      },
     ],
   },
   {
@@ -71,6 +86,12 @@ export const NAV_GROUPS: NavGroup[] = [
     title: "Build my website",
     description: "Website & domain setup",
     items: [
+      {
+        to: "/online-setup",
+        label: "Online setup map",
+        icon: Workflow,
+        description: "Domain, website & email blueprint",
+      },
       {
         to: "/domains",
         label: "Domain",
@@ -158,6 +179,12 @@ export const NAV_GROUPS: NavGroup[] = [
         description: "Google profile & local SEO",
       },
       {
+        to: "/growth-toolkit",
+        label: "Growth toolkit",
+        icon: TrendingUp,
+        description: "UTM builder & SEO handrails",
+      },
+      {
         to: "/review-kit",
         label: "Reviews",
         icon: Star,
@@ -185,8 +212,8 @@ export const NAV_GROUPS: NavGroup[] = [
   },
   {
     id: "learn",
-    title: "Learn & settings",
-    description: "Guides & settings",
+    title: "Learn & support",
+    description: "Guides & account",
     items: [
       {
         to: "/learn",
@@ -195,22 +222,71 @@ export const NAV_GROUPS: NavGroup[] = [
         description: "Plain-English guides",
       },
       {
-        to: "/help",
-        label: "Help",
+        to: "/glossary",
+        label: "Glossary",
+        icon: BookMarked,
+        description: "Domain & tech term definitions",
+      },
+      {
+        to: "/troubleshooting",
+        label: "Troubleshooting",
         icon: LifeBuoy,
-        description: "Troubleshooting & FAQs",
+        description: "Quick diagnostic fixes",
+      },
+      {
+        to: "/hire-help",
+        label: "Hire a professional",
+        icon: Users,
+        description: "When & how to delegate",
+      },
+      {
+        to: "/help",
+        label: "Help centre",
+        icon: HelpCircle,
+        description: "FAQs & support guidance",
       },
       {
         to: "/account",
-        label: "My plan",
+        label: "My plan & account",
         icon: UserRound,
-        description: "Plan summary & export",
+        description: "Plan summary, sync & account",
       },
       {
         to: "/settings",
         label: "Settings",
         icon: Settings,
         description: "Backups & local data",
+      },
+    ],
+  },
+  {
+    id: "resources",
+    title: "Company & updates",
+    description: "Framework & platform info",
+    items: [
+      {
+        to: "/how-it-works",
+        label: "How it works",
+        icon: Compass,
+        description: "The 7-phase launch framework",
+      },
+      {
+        to: "/changelog",
+        label: "Changelog",
+        icon: History,
+        description: "Recent feature updates",
+      },
+      {
+        to: "/status",
+        label: "System status",
+        icon: Activity,
+        description: "Platform health & uptime",
+      },
+      {
+        to: "/contact",
+        label: "Contact & support",
+        icon: MessageSquare,
+        description: "Reach the Cornerstone team",
       },
     ],
   },
@@ -230,8 +306,14 @@ export const ROUTE_HIERARCHY: Record<string, BreadcrumbInfo> = {
     groupRoute: "/business-profile",
     label: "Business profile",
   },
-  "/account": { group: "My plan", groupRoute: "/account", label: "My plan" },
+  "/onboarding": { group: "My plan", groupRoute: "/onboarding", label: "Plan setup wizard" },
+  "/account": { group: "Learn & support", groupRoute: "/account", label: "My plan & account" },
 
+  "/online-setup": {
+    group: "Build my website",
+    groupRoute: "/online-setup",
+    label: "Online setup map",
+  },
   "/domains": { group: "Build my website", groupRoute: "/domains", label: "Domain" },
   "/platform-matcher": {
     group: "Build my website",
@@ -278,6 +360,11 @@ export const ROUTE_HIERARCHY: Record<string, BreadcrumbInfo> = {
   },
 
   "/get-found": { group: "Grow my business", groupRoute: "/get-found", label: "Get found" },
+  "/growth-toolkit": {
+    group: "Grow my business",
+    groupRoute: "/growth-toolkit",
+    label: "Growth toolkit",
+  },
   "/review-kit": { group: "Grow my business", groupRoute: "/review-kit", label: "Reviews" },
   "/email-signature": {
     group: "Grow my business",
@@ -291,16 +378,47 @@ export const ROUTE_HIERARCHY: Record<string, BreadcrumbInfo> = {
   },
   "/maintenance": { group: "Grow my business", groupRoute: "/maintenance", label: "Maintenance" },
 
-  "/learn": { group: "Learn & settings", groupRoute: "/learn", label: "Learning library" },
-  "/help": { group: "Learn & settings", groupRoute: "/help", label: "Help" },
-  "/settings": { group: "Learn & settings", groupRoute: "/settings", label: "Settings" },
-  "/glossary": { group: "Learn & settings", groupRoute: "/glossary", label: "Glossary" },
+  "/learn": { group: "Learn & support", groupRoute: "/learn", label: "Learning library" },
+  "/help": { group: "Learn & support", groupRoute: "/help", label: "Help centre" },
+  "/settings": { group: "Learn & support", groupRoute: "/settings", label: "Settings" },
+  "/glossary": { group: "Learn & support", groupRoute: "/glossary", label: "Glossary" },
   "/troubleshooting": {
-    group: "Learn & settings",
+    group: "Learn & support",
     groupRoute: "/troubleshooting",
     label: "Troubleshooting",
   },
-  "/hire-help": { group: "Learn & settings", groupRoute: "/hire-help", label: "Hire help" },
+  "/hire-help": {
+    group: "Learn & support",
+    groupRoute: "/hire-help",
+    label: "Hire a professional",
+  },
+
+  "/how-it-works": {
+    group: "Company & updates",
+    groupRoute: "/how-it-works",
+    label: "How it works",
+  },
+  "/changelog": { group: "Company & updates", groupRoute: "/changelog", label: "Changelog" },
+  "/status": { group: "Company & updates", groupRoute: "/status", label: "System status" },
+  "/contact": { group: "Company & updates", groupRoute: "/contact", label: "Contact & support" },
+
+  "/privacy": { group: "Legal & compliance", groupRoute: "/privacy", label: "Privacy policy" },
+  "/terms": { group: "Legal & compliance", groupRoute: "/terms", label: "Terms of service" },
+  "/accessibility": {
+    group: "Legal & compliance",
+    groupRoute: "/accessibility",
+    label: "Accessibility statement",
+  },
+
+  "/sign-in": { group: "Account", groupRoute: "/sign-in", label: "Sign in" },
+  "/create-account": { group: "Account", groupRoute: "/create-account", label: "Create account" },
+  "/forgot-password": {
+    group: "Account",
+    groupRoute: "/forgot-password",
+    label: "Forgot password",
+  },
+  "/reset-password": { group: "Account", groupRoute: "/reset-password", label: "Reset password" },
+  "/delete-account": { group: "Account", groupRoute: "/delete-account", label: "Delete account" },
 };
 
 export interface NextStep {

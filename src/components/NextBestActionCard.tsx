@@ -80,16 +80,14 @@ export function NextBestActionCard({ action }: { action: TopAction }) {
             <Link to="/preflight">Run pre-flight check</Link>
           </Button>
         </div>
-        <details className="mt-4 rounded-lg border border-border bg-card p-3">
-          <summary className="flex cursor-pointer items-center gap-2 text-sm font-medium">
-            <HelpCircle className="size-4 text-primary" aria-hidden="true" />
-            Why this first?
+        <details className="mt-4 rounded-lg border border-border/70 bg-card p-2.5 text-xs">
+          <summary className="flex cursor-pointer items-center gap-2 font-medium text-muted-foreground hover:text-foreground">
+            <HelpCircle className="size-3.5 text-primary" aria-hidden="true" />
+            <span>How priorities are calculated</span>
           </summary>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            We prioritise in order: 1) domain ownership, 2) website connection, 3) HTTPS/padlock, 4)
-            primary customer action blocked, 5) business details accuracy, 6) protecting business
-            email. The most critical blocker is surfaced first so you fix what would stop customers
-            before polishing secondary items.
+          <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+            Ranked by customer impact: domain ownership &rarr; website connection &rarr; SSL
+            security &rarr; customer conversion &rarr; business email safety.
           </p>
         </details>
       </section>
@@ -177,28 +175,15 @@ export function NextBestActionCard({ action }: { action: TopAction }) {
         </Button>
       </div>
 
-      <details className="mt-4 rounded-lg border border-border bg-muted/40 p-3">
-        <summary className="flex cursor-pointer items-center gap-2 text-sm font-medium">
-          <HelpCircle className="size-4 text-primary" aria-hidden="true" />
-          Why this first?
+      <details className="mt-4 rounded-lg border border-border/70 bg-muted/30 p-2.5 text-xs">
+        <summary className="flex cursor-pointer items-center gap-2 font-medium text-muted-foreground hover:text-foreground">
+          <HelpCircle className="size-3.5 text-primary" aria-hidden="true" />
+          <span>How priorities are calculated</span>
         </summary>
-        <div className="mt-2 space-y-2 text-sm leading-relaxed text-muted-foreground">
-          <p>
-            We surface the most critical blocker first so you fix what would stop customers before
-            polishing secondary items. Priority order:
-          </p>
-          <ol className="list-decimal space-y-1 pl-5">
-            <li>Domain ownership &amp; recovery — your address is business property</li>
-            <li>Website connection — visitors must reach the right site</li>
-            <li>HTTPS/padlock — browsers warn when this is missing</li>
-            <li>Primary customer action blocked — customers cannot complete the key task</li>
-            <li>Business details accuracy — name, contact, hours, pricing</li>
-            <li>Protecting business email — mail records must stay separate</li>
-          </ol>
-          <p>
-            Within the same priority we show the earliest presence area that is not yet complete.
-          </p>
-        </div>
+        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+          Ranked by customer impact: domain ownership &rarr; website connection &rarr; SSL security
+          &rarr; customer conversion &rarr; business email safety.
+        </p>
       </details>
     </section>
   );

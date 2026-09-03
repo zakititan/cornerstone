@@ -64,20 +64,27 @@ export function CommandSearch() {
         });
       }
     }
-    // Add extra reference tools
+    // Add compliance & legal references
     list.push({
-      to: "/glossary",
-      label: "Plain-English Glossary",
-      group: "Learn & settings",
-      description: "Definitions of DNS, MX, SSL, and domain terms",
-      icon: BookOpen,
+      to: "/privacy",
+      label: "Privacy Policy",
+      group: "Legal & compliance",
+      description: "Data retention, local-first storage and rights",
+      icon: FileText,
     });
     list.push({
-      to: "/troubleshooting",
-      label: "Troubleshooting Guide",
-      group: "Learn & settings",
-      description: "Quick fixes for common setup errors",
-      icon: HelpCircle,
+      to: "/terms",
+      label: "Terms of Service",
+      group: "Legal & compliance",
+      description: "Service disclaimer and usage terms",
+      icon: FileText,
+    });
+    list.push({
+      to: "/accessibility",
+      label: "Accessibility Statement",
+      group: "Legal & compliance",
+      description: "WCAG standards, contrast and keyboard support",
+      icon: FileText,
     });
     return list;
   }, []);

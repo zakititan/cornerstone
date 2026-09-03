@@ -677,3 +677,388 @@ export async function checkFullDomainPropagation(
     rawResponses,
   };
 }
+
+export interface DomainConflictIssue {
+  id: string;
+  severity: "blocker" | "warning" | "pass";
+  category: "email" | "website" | "security" | "dns";
+  title: string;
+  description: string;
+  impact: string;
+  remediation: string;
+  suggestedRecord?: {
+    type: string;
+    host: string;
+    value: string;
+    action: "create" | "replace" | "delete";
+  };
+}
+
+export interface DomainHealthAuditReport {
+  domain: string;
+  checkedAt: string;
+  overallScore: number;
+  overallGrade: "A+" | "A" | "B" | "C" | "F";
+  status: "ready" | "needs_attention" | "blocked";
+  issues: DomainConflictIssue[];
+  metrics: {
+    totalChecked: number;
+    passed: number;
+    warnings: number;
+    blockers: number;
+  };
+  diagnosticReport: DnsDiagnosticReport;
+}
+
+/**
+ * Runs a complete, automated domain health and conflict audit
+ * Checks for RFC violations, conflicting SPF strings, root CNAME collisions,
+ * missing DMARC enforcement, and broken www subdomains.
+ */
+export async function runCompleteDomainAudit(
+  domainInput: string,
+  options?: {
+    expectedHosting?: string;
+    expectedEmail?: string;
+    usesBusinessEmail?: boolean;
+  },
+): Promise<DomainHealthAuditReport> {
+  const diagnostic = await checkFullDomainPropagation(domainInput, options?.expectedHosting);
+  const issues: DomainConflictIssue[] = [];
+  const domain = diagnostic.domain;
+
+  // 1. Check Nameserver Delegation
+  if (diagnostic.nameservers.servers.length === 0) {
+    issues.push({
+      id: "no-nameservers",
+      severity: "blocker",
+      category: "dns",
+      title: "No Nameservers Delegated",
+      description: `Domain "${domain}" does not have any active authoritative nameservers responding.`,
+      impact:
+        "The entire domain is inactive. Neither your website nor email will work for anyone worldwide.",
+      remediation:
+        "Sign in to your domain registrar and assign primary nameservers (e.g. your registrar's default DNS or Cloudflare).",
+    });
+  } else {
+    issues.push({
+      id: "nameservers-ok",
+      severity: "pass",
+      category: "dns",
+      title: "Authoritative Nameservers Active",
+      description: `${diagnostic.nameservers.servers.length} nameserver(s) delegated (${diagnostic.nameservers.detectedProvider || diagnostic.nameservers.servers[0]}).`,
+      impact: "Global DNS queries can reach your authoritative DNS provider.",
+      remediation: "No action needed.",
+    });
+  }
+
+  // 2. Check for Multiple SPF Records (RFC 7208 Violation)
+  const txtRawAnswers = diagnostic.rawResponses["TXT"]?.Answer || [];
+  const spfEntries = txtRawAnswers
+    .filter((a) => a.type === 16)
+    .map((a) => a.data.replace(/^"|"$/g, "").replace(/""/g, ""))
+    .filter((v) => v.startsWith("v=spf1"));
+
+  if (spfEntries.length > 1) {
+    const combinedIncludes = Array.from(
+      new Set(
+        spfEntries.flatMap((s) =>
+          s
+            .split(/\s+/)
+            .filter((p) => p.startsWith("include:"))
+            .map((p) => p.trim()),
+        ),
+      ),
+    );
+    const combinedSpf = `v=spf1 ${combinedIncludes.join(" ")} ~all`;
+
+    issues.push({
+      id: "multiple-spf-conflict",
+      severity: "blocker",
+      category: "email",
+      title: "Fatal Conflict: Multiple SPF Records Detected (RFC 7208)",
+      description: `Found ${spfEntries.length} separate SPF TXT records. RFC 7208 strictly specifies that a domain MUST NOT have more than one SPF TXT record.`,
+      impact:
+        "Major email providers (Google, Microsoft, Yahoo) will treat this as a fatal 'PermError'. Your business emails will be rejected or routed straight to Spam.",
+      remediation:
+        "Delete all duplicate SPF records and replace them with a single consolidated SPF record containing all your senders.",
+      suggestedRecord: {
+        type: "TXT",
+        host: "@",
+        value: combinedSpf,
+        action: "replace",
+      },
+    });
+  } else if (spfEntries.length === 1) {
+    const spf = diagnostic.spf;
+    if (spf.allMechanism === "+all" || spf.allMechanism === "?all") {
+      issues.push({
+        id: "permissive-spf",
+        severity: "warning",
+        category: "security",
+        title: "Permissive SPF Qualifier Detected",
+        description: `Your SPF record ends with "${spf.allMechanism}", which fails to instruct mail servers to reject or quarantine unauthorized senders.`,
+        impact:
+          "Spammers can forge emails pretending to be from your business address with minimal barrier.",
+        remediation:
+          "Update the trailing mechanism from " +
+          spf.allMechanism +
+          " to ~all (SoftFail) or -all (HardFail).",
+        suggestedRecord: {
+          type: "TXT",
+          host: "@",
+          value: spf.raw?.replace(/\s+(\+all|\?all)$/, " ~all") || "v=spf1 ~all",
+          action: "replace",
+        },
+      });
+    } else {
+      issues.push({
+        id: "spf-healthy",
+        severity: "pass",
+        category: "email",
+        title: "SPF Authentication Active & Strict",
+        description: `SPF record is configured with ${spf.allMechanism || "~all"} and ${spf.includes.length} authorized include(s).`,
+        impact: "Outgoing business emails pass SPF cryptographic checks.",
+        remediation: "No action needed.",
+      });
+    }
+  } else if (diagnostic.mail.hasMx || options?.usesBusinessEmail) {
+    issues.push({
+      id: "missing-spf",
+      severity: "blocker",
+      category: "email",
+      title: "Missing SPF Anti-Spoofing TXT Record",
+      description:
+        "Mail servers (MX) are active, but no TXT record beginning with 'v=spf1' was found.",
+      impact:
+        "Emails sent from your domain will fail DMARC and SPF alignment, landing in spam folders under Google and Yahoo sender policies.",
+      remediation: "Add an SPF TXT record pointing to your mail provider.",
+      suggestedRecord: {
+        type: "TXT",
+        host: "@",
+        value: options?.expectedEmail?.toLowerCase().includes("google")
+          ? "v=spf1 include:_spf.google.com ~all"
+          : options?.expectedEmail?.toLowerCase().includes("microsoft")
+            ? "v=spf1 include:spf.protection.outlook.com ~all"
+            : "v=spf1 include:spf.titan.email ~all",
+        action: "create",
+      },
+    });
+  }
+
+  // 3. Check DMARC Policy (Mandatory Google/Yahoo requirement)
+  if (!diagnostic.dmarc.isValid || diagnostic.dmarc.status === "missing") {
+    const isBlocker = diagnostic.mail.hasMx || options?.usesBusinessEmail;
+    issues.push({
+      id: "missing-dmarc",
+      severity: isBlocker ? "blocker" : "warning",
+      category: "security",
+      title: "Missing DMARC Policy (_dmarc TXT)",
+      description: `No DMARC record found at "_dmarc.${domain}". DMARC is required by modern inbox providers to verify sender authenticity.`,
+      impact:
+        "Without DMARC, emails from your domain are at severe risk of being outright rejected by Gmail, Yahoo, Apple Mail, and Outlook.",
+      remediation:
+        "Publish a DMARC TXT record at host '_dmarc'. Start with 'p=none' or 'p=quarantine'.",
+      suggestedRecord: {
+        type: "TXT",
+        host: "_dmarc",
+        value: `v=DMARC1; p=quarantine; sp=quarantine; rua=mailto:dmarc-reports@${domain}`,
+        action: "create",
+      },
+    });
+  } else if (diagnostic.dmarc.policy === "none") {
+    issues.push({
+      id: "dmarc-monitoring",
+      severity: "warning",
+      category: "security",
+      title: "DMARC Set to Monitoring Mode (p=none)",
+      description:
+        "DMARC is active but running in audit/monitoring mode (p=none). Spoofed emails are tracked but not blocked.",
+      impact:
+        "Unauthorized senders can still send fake messages claiming to be your domain, though reports will be generated.",
+      remediation:
+        "Once normal business email delivery is verified, upgrade policy from 'p=none' to 'p=quarantine' or 'p=reject'.",
+      suggestedRecord: {
+        type: "TXT",
+        host: "_dmarc",
+        value: `v=DMARC1; p=quarantine; sp=quarantine; rua=${diagnostic.dmarc.rua || `mailto:dmarc@${domain}`}`,
+        action: "replace",
+      },
+    });
+  } else {
+    issues.push({
+      id: "dmarc-enforced",
+      severity: "pass",
+      category: "security",
+      title: `DMARC Enforcement Active (p=${diagnostic.dmarc.policy})`,
+      description: `Your domain enforces strict ${diagnostic.dmarc.policy} protection against email impersonators.`,
+      impact: "Unauthorized third-parties cannot send mail from your domain.",
+      remediation: "No action needed.",
+    });
+  }
+
+  // 4. Check Root CNAME Collision (RFC 1912 / 2181)
+  const rootAnswers = diagnostic.rawResponses["A"]?.Answer || [];
+  const rootHasCname =
+    rootAnswers.some((a) => a.type === 5) ||
+    (diagnostic.rawResponses["CNAME"]?.Answer?.length ?? 0) > 0;
+  if (rootHasCname && diagnostic.mail.hasMx) {
+    issues.push({
+      id: "root-cname-mx-collision",
+      severity: "blocker",
+      category: "dns",
+      title: "Apex CNAME & MX Record Conflict (RFC 1912)",
+      description:
+        "A CNAME record was detected directly at the root zone (@). In standard DNS, a CNAME at the apex overrides all other records (including MX mail records), breaking incoming email.",
+      impact:
+        "Incoming customer emails may bounce or disappear because mail servers cannot find MX records under an apex CNAME.",
+      remediation:
+        "Replace the root CNAME with direct A records pointing to your web host's IP address, or ensure your DNS provider uses CNAME Flattening / ALIAS.",
+    });
+  }
+
+  // 5. Check Website Resolution (Root A / AAAA)
+  if (!diagnostic.website.resolves) {
+    issues.push({
+      id: "website-not-resolving",
+      severity: "blocker",
+      category: "website",
+      title: "Root Domain Has No Web Server IP",
+      description: `Neither A nor CNAME records exist pointing "${domain}" to a web hosting server.`,
+      impact:
+        "Visitors typing your web address in a browser will encounter a 'Server IP address could not be found' error.",
+      remediation:
+        "Add an A record pointing to your web host's server IP address (e.g. Shopify 23.227.38.65, Squarespace 198.185.159.144, or your host's IP).",
+    });
+  } else {
+    issues.push({
+      id: "website-resolves-ok",
+      severity: "pass",
+      category: "website",
+      title: "Website Address Resolves",
+      description: `Resolves to ${diagnostic.website.records.length} record(s)${diagnostic.website.detectedHost ? ` on ${diagnostic.website.detectedHost}` : ""}.`,
+      impact: "Visitors can load your website server over HTTP/HTTPS.",
+      remediation: "No action needed.",
+    });
+  }
+
+  // 6. Check www Subdomain Routing
+  const wwwRecord = diagnostic.website.records.find(
+    (r) => r.value.startsWith("www ->") || r.type === "CNAME",
+  );
+  const hasWwwResolution = Boolean(wwwRecord) || diagnostic.website.records.length > 0;
+  if (!wwwRecord) {
+    issues.push({
+      id: "missing-www-routing",
+      severity: "warning",
+      category: "website",
+      title: "Missing www Subdomain Alignment",
+      description: `Could not verify a distinct CNAME or A record for "www.${domain}".`,
+      impact:
+        "Customers who type 'www.' before your domain in their browser might see a connection error instead of your site.",
+      remediation: `Add a CNAME record with host "www" pointing to your root domain or web host alias.`,
+      suggestedRecord: {
+        type: "CNAME",
+        host: "www",
+        value: domain,
+        action: "create",
+      },
+    });
+  } else {
+    issues.push({
+      id: "www-routing-ok",
+      severity: "pass",
+      category: "website",
+      title: "www Subdomain Configured",
+      description: `Traffic to "www.${domain}" is properly aliased to your web host.`,
+      impact: "Both bare domain and www formats reach your website.",
+      remediation: "No action needed.",
+    });
+  }
+
+  // 7. Check Mail Records (MX)
+  if (options?.usesBusinessEmail && !diagnostic.mail.hasMx) {
+    issues.push({
+      id: "missing-mx-email",
+      severity: "blocker",
+      category: "email",
+      title: "No MX (Mail Exchange) Records Found",
+      description: "Business email was marked as required, but no MX records are published in DNS.",
+      impact:
+        "Your business cannot receive emails. Senders will get 'Mailbox not found' or 'No mail exchange' bounce notifications.",
+      remediation:
+        "Add the required MX records from your email provider (e.g. Google Workspace, Microsoft 365, Titan).",
+    });
+  } else if (diagnostic.mail.hasMx) {
+    issues.push({
+      id: "mx-healthy",
+      severity: "pass",
+      category: "email",
+      title: "Mail Exchange (MX) Active",
+      description: `${diagnostic.mail.records.length} MX record(s) detected (${diagnostic.mail.detectedProvider || "Custom Email"}).`,
+      impact: "Incoming customer emails can be routed to your inbox provider.",
+      remediation: "No action needed.",
+    });
+  }
+
+  // 8. DKIM Check
+  const activeDkim = diagnostic.dkim.filter((d) => d.found);
+  if (diagnostic.mail.hasMx && activeDkim.length === 0) {
+    issues.push({
+      id: "dkim-advisory",
+      severity: "warning",
+      category: "security",
+      title: "DKIM Cryptographic Key Not Detected on Default Selectors",
+      description:
+        "Could not detect DKIM keys on common provider selectors (google, titan1, selector1, zoho).",
+      impact:
+        "Emails may lack cryptographic signing headers, slightly lowering deliverability into corporate Microsoft/Google spam filters.",
+      remediation:
+        "Sign in to your email admin dashboard and activate DKIM signing by copying the provided TXT/CNAME records into your registrar DNS.",
+    });
+  } else if (activeDkim.length > 0) {
+    issues.push({
+      id: "dkim-active",
+      severity: "pass",
+      category: "security",
+      title: "DKIM Signature Keys Active",
+      description: `Found active DKIM selector: ${activeDkim[0]?.selectorChecked}`,
+      impact: "Emails from your domain contain cryptographic tamper-proofing.",
+      remediation: "No action needed.",
+    });
+  }
+
+  // Calculate Metrics
+  const blockers = issues.filter((i) => i.severity === "blocker").length;
+  const warnings = issues.filter((i) => i.severity === "warning").length;
+  const passed = issues.filter((i) => i.severity === "pass").length;
+  const totalChecked = issues.length;
+
+  let overallScore = 100 - blockers * 28 - warnings * 12;
+  if (overallScore < 0) overallScore = 0;
+
+  let overallGrade: "A+" | "A" | "B" | "C" | "F" = "F";
+  if (blockers === 0 && warnings === 0) overallGrade = "A+";
+  else if (blockers === 0 && warnings <= 2) overallGrade = "A";
+  else if (blockers === 0) overallGrade = "B";
+  else if (blockers === 1) overallGrade = "C";
+  else overallGrade = "F";
+
+  const status = blockers > 0 ? "blocked" : warnings > 0 ? "needs_attention" : "ready";
+
+  return {
+    domain,
+    checkedAt: new Date().toISOString(),
+    overallScore,
+    overallGrade,
+    status,
+    issues,
+    metrics: {
+      totalChecked,
+      passed,
+      warnings,
+      blockers,
+    },
+    diagnosticReport: diagnostic,
+  };
+}

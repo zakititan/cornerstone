@@ -252,3 +252,104 @@
     radial-gradient(60rem 30rem at 15% -10%, var(--color-primary-soft), transparent 65%),
     radial-gradient(50rem 26rem at 95% 0%, var(--color-accent), transparent 60%);
 }
+
+/* ==========================================================================
+   Print & PDF Styling for Launch Dossier, Handover Briefs, & Ownership Records
+   ========================================================================== */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 1.5cm;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #111827 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    font-size: 11pt !important;
+  }
+
+  /* Hide app navigation chrome, sidebars, header, breadcrumbs, buttons, floating search, and chat widgets */
+  aside,
+  header,
+  nav,
+  .print\:hidden,
+  button:not([data-print-show]),
+  input,
+  textarea,
+  [data-radix-popper-content-wrapper],
+  .lucide-bot,
+  .chatbot-container {
+    display: none !important;
+  }
+
+  /* Expand main container to 100% without scrollbars or margins */
+  .mx-auto,
+  main {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Strip card backgrounds & shadows for clean, ink-friendly document printing */
+  .surface-panel,
+  #launch-dossier-document {
+    border: 1px solid #d1d5db !important;
+    box-shadow: none !important;
+    padding: 1.5rem !important;
+    margin: 0 !important;
+    background: #ffffff !important;
+    border-radius: 0 !important;
+  }
+
+  /* Prevent page-breaks inside tables, signature boxes, and key sections */
+  table,
+  tr,
+  .print-avoid-break,
+  .border-dashed,
+  [data-print-avoid-break] {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Crisp table border styling */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  th,
+  td {
+    border-bottom: 1px solid #e5e7eb !important;
+    padding: 6pt 4pt !important;
+    color: #111827 !important;
+  }
+
+  /* High contrast text */
+  .text-muted-foreground {
+    color: #4b5563 !important;
+  }
+
+  /* Support printing inside open dialog modals */
+  [role="dialog"] {
+    position: static !important;
+    inset: auto !important;
+    transform: none !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    box-shadow: none !important;
+    border: 1px solid #d1d5db !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+  }
+
+  /* Hide backdrop overlay when printing */
+  [data-state="open"] > div[class*="fixed inset-0"] {
+    display: none !important;
+  }
+}
+

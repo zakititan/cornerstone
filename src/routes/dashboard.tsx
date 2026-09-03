@@ -83,9 +83,15 @@ function Dashboard() {
           actionLabel="Create my free plan"
           actionTo="/onboarding"
         />
-        <div className="mt-4 text-center">
+        <div className="mt-4 flex flex-wrap justify-center gap-2">
           <Button variant="ghost" onClick={loadDemo}>
             Load the Harbor &amp; Hearth Bakery demo
+          </Button>
+          <Button variant="ghost" asChild>
+            <Link to="/how-it-works">See how it works</Link>
+          </Button>
+          <Button variant="ghost" asChild>
+            <Link to="/learn">Learn the basics first</Link>
           </Button>
         </div>
       </AppShell>

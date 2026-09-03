@@ -242,6 +242,12 @@ export function AppShell({
 
   return (
     <div className="min-h-screen bg-surface">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-primary-foreground"
+      >
+        Skip to main content
+      </a>
       <div className="mx-auto flex w-full max-w-[1400px]">
         <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col gap-6 overflow-y-auto border-r border-sidebar-border bg-sidebar px-4 py-6 lg:flex">
           <Link to="/" className="flex items-center gap-2 px-2">
@@ -394,7 +400,9 @@ export function AppShell({
               {actions}
             </div>
           </header>
-          <main className="px-4 py-6 sm:px-6 lg:py-8">{children}</main>
+          <main id="main-content" className="px-4 py-6 sm:px-6 lg:py-8">
+            {children}
+          </main>
         </div>
       </div>
 

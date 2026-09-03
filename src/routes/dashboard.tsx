@@ -1,27 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import {
-  ArrowRight,
-  ChevronDown,
-  Clock,
-  HelpCircle,
-  ListChecks,
-  Globe,
-  Network,
-  FileText,
-  Rocket,
-  BookOpen,
-  ClipboardCheck,
-  Building2,
-  Calculator,
-  Mail,
-  Star,
-  ShieldAlert,
-} from "lucide-react";
+import { ArrowRight, ChevronDown, Clock, HelpCircle, Rocket } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { ProgressRing } from "@/components/ProgressRing";
 import { EmptyState } from "@/components/EmptyState";
-import { OwnershipWarningCard } from "@/components/Callouts";
 import { LaunchTaskCard } from "@/components/TaskCards";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -30,7 +12,6 @@ import { useStore } from "@/lib/store";
 import { PHASES, currentStage, progressPercent } from "@/lib/plan";
 import { getReadiness } from "@/lib/readiness";
 import { LaunchReadinessCard } from "@/components/LaunchReadinessCard";
-import { ARTICLES } from "@/lib/library";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/dashboard")({
@@ -51,21 +32,6 @@ export const Route = createFileRoute("/dashboard")({
   }),
   component: Dashboard,
 });
-
-const QUICK_TOOLS = [
-  { to: "/launch-wizard", label: "Launch track wizard", icon: Rocket },
-  { to: "/preflight", label: "Post-launch site audit", icon: ClipboardCheck },
-  { to: "/cost-calculator", label: "3-Yr budget calculator", icon: Calculator },
-  { to: "/email-signature", label: "Email signature", icon: Mail },
-  { to: "/review-kit", label: "Review QR kit", icon: Star },
-  { to: "/security-drill", label: "Security & recovery", icon: ShieldAlert },
-  { to: "/domains", label: "Domain finder", icon: Globe },
-  { to: "/business-profile", label: "Business profile", icon: Building2 },
-  { to: "/content", label: "Content builder", icon: FileText },
-  { to: "/connect-domain", label: "Connect domain", icon: Network },
-  { to: "/checklist", label: "Launch checklist", icon: ListChecks },
-  { to: "/launch-dossier", label: "Launch dossier", icon: FileText },
-];
 
 function Dashboard() {
   const { state, hydrated, hasPlan, setTaskStatus, updateTask, loadDemo } = useStore();
@@ -128,17 +94,6 @@ function Dashboard() {
 
   const stageLabel = PHASES.find((p) => p.key === stage)?.title ?? "Plan";
   const completed = tasks.filter((t) => t.status === "complete").length;
-  const stageToolRoutes: Record<string, string[]> = {
-    plan: ["/business-profile", "/cost-calculator", "/domains", "/launch-wizard"],
-    domain: ["/domains", "/business-email", "/connect-domain", "/security-drill"],
-    setup: ["/platform-matcher", "/content", "/business-email", "/cost-calculator"],
-    build: ["/content", "/email-signature", "/review-kit", "/launch-dossier"],
-    connect: ["/connect-domain", "/preflight", "/customer-journey", "/security-drill"],
-    launch: ["/preflight", "/customer-journey", "/review-kit", "/email-signature"],
-    grow: ["/get-found", "/review-kit", "/maintenance", "/cost-calculator"],
-  };
-  const stageTools = QUICK_TOOLS.filter((tool) => stageToolRoutes[stage]?.includes(tool.to));
-
   return (
     <AppShell
       title={`Welcome back, ${state.business.businessName || "there"}`}
@@ -219,152 +174,7 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="surface-panel flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between border-primary/30 bg-primary-soft/20">
-          <div className="space-y-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
-              Linear 6-Step Roadmap
-            </span>
-            <p className="font-display text-base font-bold text-foreground flex items-center gap-2">
-              <Rocket className="size-4.5 text-primary" aria-hidden="true" /> Guided Launch Setup
-              Wizard
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Sequential track: 1. Secure Domain → 2. Business Email → 3. Build Site → 4. Connect
-              DNS → 5. Google Business → 6. Pre-Flight Test.
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-2 shrink-0">
-            <Button asChild size="sm" className="gap-1.5 shadow">
-              <Link to="/launch-wizard">
-                Open Launch Wizard <ArrowRight className="size-4" aria-hidden="true" />
-              </Link>
-            </Button>
-            <Button asChild variant="outline" size="sm" className="gap-1.5">
-              <Link to="/preflight">Post-launch site audit</Link>
-            </Button>
-          </div>
-        </div>
-
         <LaunchReadinessCard readiness={readiness} />
-
-        <div className="surface-panel flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="font-display text-sm font-semibold flex items-center gap-2">
-              <ClipboardCheck className="size-4 text-primary" aria-hidden="true" /> Test your main
-              customer action
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Walk through your primary journey on a real phone — phone, WhatsApp, form, booking,
-              purchase, visit or newsletter — and record what happens.
-            </p>
-          </div>
-          <Button asChild size="sm" className="shrink-0">
-            <Link to="/customer-journey">
-              Open journey tester <ArrowRight className="size-4" aria-hidden="true" />
-            </Link>
-          </Button>
-        </div>
-
-        {/* Growth & Operations Toolkit */}
-        <section aria-labelledby="growth-toolkit" className="space-y-3">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 id="growth-toolkit" className="font-display text-xl font-bold">
-                Launch & Growth Toolkit
-              </h2>
-              <p className="text-xs text-muted-foreground">
-                Specialized utilities to protect your budget, brand outgoing emails, get 5-star
-                reviews, and safeguard your domain.
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            <Link
-              to="/cost-calculator"
-              className="group surface-panel p-4 space-y-2 hover:border-primary/50 transition-all block"
-            >
-              <div className="flex items-center justify-between">
-                <div className="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
-                  <Calculator className="size-4" />
-                </div>
-                <Badge variant="outline" className="text-[10px]">
-                  3-Year TCO
-                </Badge>
-              </div>
-              <h3 className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
-                Budget & Cost Calculator
-              </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Calculate true 3-year running costs across domain, email, hosting & payment
-                processing without renewal traps.
-              </p>
-            </Link>
-
-            <Link
-              to="/email-signature"
-              className="group surface-panel p-4 space-y-2 hover:border-primary/50 transition-all block"
-            >
-              <div className="flex items-center justify-between">
-                <div className="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
-                  <Mail className="size-4" />
-                </div>
-                <Badge variant="outline" className="text-[10px]">
-                  Client-Safe
-                </Badge>
-              </div>
-              <h3 className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
-                Email Signature Generator
-              </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Generate responsive HTML email signatures with tap-to-call, monogram, and Google
-                Review links for Gmail & Outlook.
-              </p>
-            </Link>
-
-            <Link
-              to="/review-kit"
-              className="group surface-panel p-4 space-y-2 hover:border-primary/50 transition-all block"
-            >
-              <div className="flex items-center justify-between">
-                <div className="size-8 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
-                  <Star className="size-4 fill-amber-500" />
-                </div>
-                <Badge variant="outline" className="text-[10px]">
-                  Printable QR
-                </Badge>
-              </div>
-              <h3 className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
-                Google Review Kit
-              </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Print 5-star tabletop QR counter stands, receipt slips, and copy post-service SMS
-                follow-up templates.
-              </p>
-            </Link>
-
-            <Link
-              to="/security-drill"
-              className="group surface-panel p-4 space-y-2 hover:border-primary/50 transition-all block"
-            >
-              <div className="flex items-center justify-between">
-                <div className="size-8 rounded-lg bg-red-500/10 text-red-600 dark:text-red-400 flex items-center justify-center font-bold">
-                  <ShieldAlert className="size-4" />
-                </div>
-                <Badge variant="outline" className="text-[10px]">
-                  Outage Triage
-                </Badge>
-              </div>
-              <h3 className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
-                Security & Recovery Drill
-              </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Interactive outage triage flowchart, 2FA fortress checklist, and 1-click DNS zone
-                backup snapshot vault.
-              </p>
-            </Link>
-          </div>
-        </section>
 
         {/* Next step detail */}
         {nextTask ? (
@@ -538,50 +348,6 @@ function Dashboard() {
                 Nothing completed yet. Your first finished task will appear here.
               </p>
             )}
-          </section>
-        </div>
-
-        <OwnershipWarningCard />
-
-        {/* Quick tools + learning */}
-        <div className="grid gap-6 lg:grid-cols-2">
-          <section aria-labelledby="tools" className="surface-panel p-5">
-            <h2 id="tools" className="font-display text-lg font-bold">
-              Useful right now
-            </h2>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              {stageTools.map((t) => (
-                <Link
-                  key={t.to}
-                  to={t.to}
-                  className="flex items-center gap-3 rounded-xl border border-border p-3.5 text-sm font-medium transition-colors hover:bg-muted"
-                >
-                  <t.icon className="size-4.5 text-primary" aria-hidden="true" />
-                  {t.label}
-                </Link>
-              ))}
-            </div>
-          </section>
-
-          <section aria-labelledby="learning" className="surface-panel p-5">
-            <h2 id="learning" className="font-display text-lg font-bold">
-              Recommended reading
-            </h2>
-            <ul className="mt-4 space-y-3">
-              {ARTICLES.slice(0, 3).map((a) => (
-                <li key={a.slug}>
-                  <Link to="/learn" className="flex items-start gap-3 text-sm hover:underline">
-                    <BookOpen className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
-                    <span>
-                      <span className="font-medium">{a.title}</span>
-                      <span className="block text-xs text-muted-foreground">
-                        {a.minutes} min read
-                      </span>
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
           </section>
         </div>
       </div>

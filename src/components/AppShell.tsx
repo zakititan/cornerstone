@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useState, useMemo, type ReactNode } from "react";
 import {
   LayoutDashboard,
   Globe,
@@ -223,22 +223,6 @@ export function AppShell({
     state.tasks.find((task) => task.status !== "complete");
   const currentLink = ALL_LINKS.find((item) => item.to === pathname);
   const currentGroup = NAV_GROUPS.find((group) => group.items.some((item) => item.to === pathname));
-  const [recent, setRecent] = useState<string[]>([]);
-  useEffect(() => {
-    const saved = window.sessionStorage.getItem("lmbo.recent-pages");
-    if (saved) setRecent(JSON.parse(saved) as string[]);
-  }, []);
-  useEffect(() => {
-    if (!currentLink) return;
-    setRecent((pages) => {
-      const next = [pathname, ...pages.filter((page) => page !== pathname)].slice(0, 4);
-      window.sessionStorage.setItem("lmbo.recent-pages", JSON.stringify(next));
-      return next;
-    });
-  }, [pathname, currentLink]);
-  const recentLinks = recent
-    .map((path) => ALL_LINKS.find((item) => item.to === path))
-    .filter((item): item is (typeof ALL_LINKS)[number] => Boolean(item));
 
   return (
     <div className="min-h-screen bg-surface">
@@ -268,22 +252,6 @@ export function AppShell({
             <Search className="size-4" /> Find a tool or answer
           </Button>
           <NavLinks />
-          {recentLinks.length ? (
-            <div className="space-y-1 border-t border-sidebar-border pt-3">
-              <p className="px-3 text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
-                Recently used
-              </p>
-              {recentLinks.map(({ to, label }) => (
-                <Link
-                  key={to}
-                  to={to}
-                  className="block rounded-lg px-3 py-1.5 text-xs text-sidebar-foreground hover:bg-sidebar-accent/60"
-                >
-                  {label}
-                </Link>
-              ))}
-            </div>
-          ) : null}
           <div
             aria-label="Quick actions"
             className="rounded-xl border border-sidebar-border bg-sidebar-accent/20 p-2"
@@ -379,7 +347,7 @@ export function AppShell({
               </Sheet>
               <div className="min-w-0 flex-1">
                 {currentGroup && currentLink ? (
-                  <p className="mb-0.5 text-xs text-muted-foreground">
+                  <p className="mb-0.5 hidden text-xs text-muted-foreground sm:block">
                     {currentGroup.label} <span aria-hidden="true">/</span> {currentLink.label}
                   </p>
                 ) : null}
